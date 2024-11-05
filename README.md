@@ -9,9 +9,12 @@
 예를 들어 삼성 전자의 그래프를 학습 시킨다고 하면, 다른 그래프와 합쳐서 보는게 아니라 삼성 전자의 경우 그래프 모양이 이럴때, 그래프 모양이 이렇게 변했다를 찾는거임
 (이게 충분하지는 않을듯) 근데 내가 생각한건 뭐냐면 우리 같은 개미 투자자들한테 언제 얼마냐 오르는거는 중요한게 아니고, 이게 오를건지 안오를건지 분석해주는 수학적 모델이 필요한거임.
 
-1. 투자 보조 지표
-  a. MACD (Moving Average Convergence Divergence)
-  b. RSI (Relative Strength Index)
-  c. Stochastic Slow
-  d. Bollinger band
+1. 투자 보조 지표 \n
+  a. MACD (Moving Average Convergence Divergence) \n
+  b. RSI (Relative Strength Index) \n
+  c. Stochastic Slow \n
+  d. Bollinger band \n
 2. TTS 조건 검색
+
+
+https://www.valley.town/join
