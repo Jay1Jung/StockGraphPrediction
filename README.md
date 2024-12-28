@@ -18,3 +18,5 @@
 
 
 https://www.valley.town/join
+
+https://github.com/msitt/blpapi-python/blob/master/README.md
