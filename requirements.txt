@@ -1,0 +1,17 @@
+# Core Libraries
+pandas==1.5.3          # For data manipulation and analysis
+matplotlib==3.7.1      # For data visualization
+numpy==1.24.2          # For numerical computations
+
+# Web Scraping
+beautifulsoup4==4.12.2 # For parsing HTML (PMI scraping)
+selenium==4.10.0       # For web automation (requires ChromeDriver)
+
+# Finance Data Fetching
+yfinance==0.2.22       # For fetching S&P 500 and other stock data
+
+# Machine Learning (optional, for predictions)
+scikit-learn==1.2.3    # For implementing predictive models
+
+# Python version
+python==3.9.0          # Specify Python version used in the project
