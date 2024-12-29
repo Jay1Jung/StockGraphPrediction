@@ -30,9 +30,9 @@ S&P 500 주식들 중에서 산업별로 크게 9개의 섹터로 나누어서 �
 14. 미국 국채경매
 15. 기존주택판매
 18. 실업률 * https://data.worldbank.org/indicator/SL.UEM.TOTL.ZS?locations=AE-US&name_desc=false
-19. CPI 상승률 *
+19. CPI 상승률 * https://data.worldbank.org/indicator/FP.CPI.TOTL?locations=US
 20. PPI 상승률 
-21. 경기선행지수 *
+21. 경기선행지수 * https://fred.stlouisfed.org/series/USSLIND
 
 1. 투자 보조 지표 \n
   a. MACD (Moving Average Convergence Divergence) \n
