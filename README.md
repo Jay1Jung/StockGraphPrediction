@@ -22,7 +22,7 @@ S&P 500 주식들 중에서 산업별로 크게 9개의 섹터로 나누어서 �
 3. S&P 글로벌 서비스업 PMI *
 4. S&P 글로벌 합성 PMI
 5. 연준 기준금리 결정 *
-6. 실질 GDP 성장률 *
+6. 실질 GDP 성장률 *  https://data.worldbank.org/indicator/NY.GDP.MKTP.CD
 7. 근원 PCE 가격지수
 10. EIA 원유재고
 12. 신규주택판매
