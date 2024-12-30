@@ -209,6 +209,38 @@ def run_gdp_cpi2csv():
         print("Error running gdp_cpi2csv.py:")
         print(e.stderr)
 
+def run_m_pmi():
+    """Run m_pmi.py script."""
+    SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "refine_data", "m_pmi.py")
+    try:
+        result = subprocess.run(
+            ["python3", SCRIPT_PATH],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        print("m_pmi.py executed successfully:")
+        print(result.stdout)
+    except subprocess.CalledProcessError as e:
+        print("Error running m_pmi.py:")
+        print(e.stderr)
+
+def run_s_pmi():
+    """Run s_pmi.py script."""
+    SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "refine_data", "s_pmi.py")
+    try:
+        result = subprocess.run(
+            ["python3", SCRIPT_PATH],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        print("s_pmi.py executed successfully:")
+        print(result.stdout)
+    except subprocess.CalledProcessError as e:
+        print("Error running s_pmi.py:")
+        print(e.stderr)
+
 def run_pmi2csv():
     """Run pmi2csv.py script."""
     SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "refine_data", "pmi2csv.py")
@@ -289,21 +321,23 @@ def main():
     if args.mode == "scrap":
         print("Running data scrapping...")
         run_ngdp2csv() # Call ngdp2csv.py
-        # run_m_pmi2html()  # Call m_pmi2html.py
-        # run_s_pmi2html()  # Call s_pmi2html.py
-        # run_cpi2html()  # Call cpi2html.py
-        # run_fomc_IRD2html()  # Call fomc_IRD2html.py
-        # run_unrate2html()  # Call unrate2html.py
-        # run_leadingidx2html()  #Call leadingidx2html.py
+        run_m_pmi2html()  # Call m_pmi2html.py
+        run_s_pmi2html()  # Call s_pmi2html.py
+        run_cpi2html()  # Call cpi2html.py
+        run_fomc_IRD2html()  # Call fomc_IRD2html.py
+        run_unrate2html()  # Call unrate2html.py
+        run_leadingidx2html()  #Call leadingidx2html.py
     elif args.mode == "refine":
         print("Running data refining...")
-        run_unemployment()  # Call unemployment.py
-        run_html2csv()  # Call html2csv.py
-        run_snp2csv()  # Call snp2csv.py
-        run_gdp_cpi2csv()  # Call gdp_cpi2csv.py
+        # run_unemployment()  # Call unemployment.py
+        run_m_pmi()
+        run_s_pmi()
+        # run_html2csv()  # Call html2csv.py
+        # run_snp2csv()  # Call snp2csv.py
+        # run_gdp_cpi2csv()  # Call gdp_cpi2csv.py
         # run_pmi2csv()  # Call pmi2csv.py * not resolved
-        run_dff2csv()  # Call dff2csv.py
-        run_leading_index2csv()  # Call leading_index2csv.py
+        # run_dff2csv()  # Call dff2csv.py
+        # run_leading_index2csv()  # Call leading_index2csv.py
         # run_closing_price()  # Call closing_price.py * not resolved ** Should be moved to refine
     elif args.mode == "R":
         print("Running R analysis...")
