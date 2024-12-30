@@ -219,8 +219,7 @@ def main():
         # run_pmi2csv()  # Call pmi2csv.py * not resolved
         # run_dff2csv()  # Call dff2csv.py
         # run_leading_index2csv()  # Call leading_index2csv.py
-        # run_closing_price()  # Call closing_price.py * not resolved
-        
+        # run_closing_price()  # Call closing_price.py * not resolved ** Should be moved to refine
     elif args.mode == "R":
         print("Running R analysis...")
         run_r_analysis()
