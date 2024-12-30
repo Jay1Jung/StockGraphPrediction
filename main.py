@@ -113,6 +113,86 @@ def run_snp2csv():
         print("Error running snp2csv.py:")
         print(e.stderr)
 
+def run_gdp_cpi2csv():
+    """Run the gdp_cpi2csv.py script."""
+    SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "refine_data", "gdp_cpi2csv.py")
+    try:
+        result = subprocess.run(
+            ["python3", SCRIPT_PATH],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        print("gdp_cpi2csv.py executed successfully:")
+        print(result.stdout)
+    except subprocess.CalledProcessError as e:
+        print("Error running gdp_cpi2csv.py:")
+        print(e.stderr)
+
+def run_pmi2csv():
+    """Run pmi2csv.py script."""
+    SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "refine_data", "pmi2csv.py")
+    try:
+        result = subprocess.run(
+            ["python3", SCRIPT_PATH],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        print("gdp_cpi2csv.py executed successfully:")
+        print(result.stdout)
+    except subprocess.CalledProcessError as e:
+        print("Error running pmi2csv.py:")
+        print(e.stderr)
+
+def run_dff2csv():
+    """Run dff2csv.py script."""
+    SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "refine_data", "dff2csv.py")
+    try:
+        result = subprocess.run(
+            ["python3", SCRIPT_PATH],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        print("dff2csv.py executed successfully:")
+        print(result.stdout)
+    except subprocess.CalledProcessError as e:
+        print("Error running dff2csv.py:")
+        print(e.stderr)
+
+def run_leading_index2csv():
+    """Run leading_index2.py script."""
+    SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "refine_data", "leading_index2csv.py")
+    try:
+        result = subprocess.run(
+            ["python3", SCRIPT_PATH],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        print("leading_index2.py executed successfully:")
+        print(result.stdout)
+    except subprocess.CalledProcessError as e:
+        print("Error running leading_index2.py:")
+        print(e.stderr)
+
+def run_closing_price():
+    """Run leading_index2.py script."""
+    SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "refine_data", "closing_price.py")
+    try:
+        result = subprocess.run(
+            ["python3", SCRIPT_PATH],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        print("closing_price.py executed successfully:")
+        print(result.stdout)
+    except subprocess.CalledProcessError as e:
+        print("Error running closing_price.py:")
+        print(e.stderr)
+
 # Step 4: Main function
 def main():
     parser = argparse.ArgumentParser(description="StockGraphPrediction Main Script")
@@ -134,7 +214,13 @@ def main():
         print("Running data refining...")
         # run_unemployment()  # Call unemployment.py
         # run_html2csv()  # Call html2csv.py
-        run_snp2csv()  # Call snp2csv.py
+        # run_snp2csv()  # Call snp2csv.py
+        # run_gdp_cpi2csv()  # Call gdp_cpi2csv.py
+        # run_pmi2csv()  # Call pmi2csv.py * not resolved
+        # run_dff2csv()  # Call dff2csv.py
+        # run_leading_index2csv()  # Call leading_index2csv.py
+        # run_closing_price()  # Call closing_price.py * not resolved
+        
     elif args.mode == "R":
         print("Running R analysis...")
         run_r_analysis()
