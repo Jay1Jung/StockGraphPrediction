@@ -29,7 +29,11 @@ options.add_argument(
 driver = webdriver.Chrome(service=service, options=options)
 driver.set_page_load_timeout(180)
 
-# Step 3: Locate and click "Show More" until no more buttons
+# Step 3: Open the URL
+url = "https://www.investing.com/economic-calendar/services-pmi-1062"
+driver.get(url)
+
+# Step 4: Locate and click "Show More" until no more buttons
 try:
     while True:
         try:
@@ -55,8 +59,12 @@ except Exception as e:
     print(f"Failed to remove ad section: {e}")
 
 # Step 5: Save the expanded table HTML
+RAW_DATA_DIR = os.path.join(PROJECT_ROOT, "data", "raw")
+os.makedirs(RAW_DATA_DIR, exist_ok=True)
+PMI_HTML_FILE = os.path.join(RAW_DATA_DIR, "s_pmi.html")
+
 html_content = driver.page_source
-with open("s_pmi.html", "w", encoding="utf-8") as file:
+with open(PMI_HTML_FILE, "w", encoding="utf-8") as file:
     file.write(html_content)
 
 print("Successfully saved to 's_pmi.html'.")

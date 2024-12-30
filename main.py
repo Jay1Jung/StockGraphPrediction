@@ -80,7 +80,7 @@ def main():
     # Route to the correct functionality
     if args.mode == "dataprocess":
         print("Running data processing...")
-        #run_m_pmi2html()  # Call the m_pmi2html function
+        run_m_pmi2html()  # Call the m_pmi2html function
         run_s_pmi2html()  # Call the s_pmi2html function
     elif args.mode == "R":
         print("Running R analysis...")
