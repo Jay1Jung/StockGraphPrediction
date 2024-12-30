@@ -97,6 +97,22 @@ def run_html2csv():
         print("Error running html2csv.py:")
         print(e.stderr)
 
+def run_snp2csv():
+    """Run the snp2csv.py script."""
+    SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "refine_data", "snp2csv.py")
+    try:
+        result = subprocess.run(
+            ["python3", SCRIPT_PATH],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        print("snp2csv.py executed successfully:")
+        print(result.stdout)
+    except subprocess.CalledProcessError as e:
+        print("Error running snp2csv.py:")
+        print(e.stderr)
+
 # Step 4: Main function
 def main():
     parser = argparse.ArgumentParser(description="StockGraphPrediction Main Script")
@@ -117,7 +133,8 @@ def main():
     elif args.mode == "refine":
         print("Running data refining...")
         # run_unemployment()  # Call unemployment.py
-        run_html2csv()  # Call html2csv.py
+        # run_html2csv()  # Call html2csv.py
+        run_snp2csv()  # Call snp2csv.py
     elif args.mode == "R":
         print("Running R analysis...")
         run_r_analysis()
