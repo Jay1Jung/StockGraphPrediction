@@ -1,28 +1,33 @@
 import pandas as pd
+import calendar
 
-# Read the unemployment data file
-file_path = '/Users/jayjung/Desktop/dataset/USA_Unemployment_filtered.csv'
-data = pd.read_csv(file_path)
+# Load the Unemployment Rate data
+unemployment_rate_file_path = '/Users/jayjung/Desktop/dataset/Unemploymentrate.csv' 
+unemployment_rate_data = pd.read_csv(unemployment_rate_file_path)
 
-# Extract numeric year columns
-year_columns = [col for col in data.columns if col.isdigit()]
+# Extract Year and Month from the TIME_PERIOD column
+unemployment_rate_data['Year'] = unemployment_rate_data['TIME_PERIOD'].str[:4].astype(int)
+unemployment_rate_data['Month'] = unemployment_rate_data['TIME_PERIOD'].str[5:7].astype(int)
 
-# Convert data to monthly format
-monthly_data = []
-for year in year_columns:
-    if not data[year].isnull().all():  # Skip years with all NaN values
-        year_data = pd.DataFrame({
-            'Year': [int(year)] * 12,
-            'Month': list(range(1, 13)),
-            'Unemployment Rate': [data[year].iloc[0]] * 12  # Repeat the annual value for 12 months
-        })
-        monthly_data.append(year_data)
+# Filter data for years starting from 2000
+unemployment_rate_data = unemployment_rate_data[unemployment_rate_data['Year'] >= 2000]
 
-# Combine all years into a single DataFrame
-monthly_data_df = pd.concat(monthly_data, ignore_index=True)
+# Generate all dates for each month and assign the OBS_VALUE to each day
+expanded_rows = []
 
-# Save the transformed data
-output_file_path = '/Users/jayjung/Desktop/dataset/USA_Unemployment_Monthly_Transformed.csv'
-monthly_data_df.to_csv(output_file_path, index=False)
+for _, row in unemployment_rate_data.iterrows():
+    year = row['Year']
+    month = row['Month']
+    obs_value = row['OBS_VALUE']
+    days_in_month = calendar.monthrange(year, month)[1]
+    for day in range(1, days_in_month + 1):
+        expanded_rows.append({'Year': year, 'Month': month, 'Day': day, 'OBS_VALUE': obs_value})
 
-print(f"Transformed file saved: {output_file_path}")
+# Create a new DataFrame with the expanded data
+unemployment_rate_expanded = pd.DataFrame(expanded_rows)
+
+# Save the expanded data to a CSV file
+expanded_output_path = 'UnemploymentRate_expanded.csv'
+unemployment_rate_expanded.to_csv(expanded_output_path, index=False)
+
+print("Expanded Unemployment Rate data has been saved to", expanded_output_path)
