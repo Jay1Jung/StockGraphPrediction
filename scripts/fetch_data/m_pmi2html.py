@@ -1,3 +1,4 @@
+import os
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
@@ -5,12 +6,15 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
-import os
 import time
 
-# Step 1: Set up Selenium WebDriver
-chrome_driver_path = os.path.expanduser("~/Documents/StockGraphPrediction/chromedriver-mac-x64/chromedriver")
-service = Service(chrome_driver_path)
+# Step 1: Set up paths dynamically
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))  # Two levels up from this file
+DRIVERS_DIR = os.path.join(PROJECT_ROOT, "drivers")
+CHROMEDRIVER_PATH = os.path.join(DRIVERS_DIR, "chromedriver-mac-x64", "chromedriver")
+
+# Step 2: Set up Selenium WebDriver
+service = Service(CHROMEDRIVER_PATH)
 
 options = Options()
 options.add_argument("--headless")
@@ -25,11 +29,11 @@ options.add_argument(
 driver = webdriver.Chrome(service=service, options=options)
 driver.set_page_load_timeout(180)
 
-# Step 2: Open the URL
+# Step 3: Open the URL
 url = "https://www.investing.com/economic-calendar/manufacturing-pmi-829"
 driver.get(url)
 
-# Step 3: Locate and click "Show More" until no more buttons
+# Step 4: Locate and click "Show More" until no more buttons
 try:
     while True:
         try:
@@ -46,20 +50,16 @@ try:
 except Exception as e:
     print(f"Error: {e}")
 
-# Step 4: Remove the black section
-try:
-    black_section = driver.find_element(By.ID, "ad-container")
-    driver.execute_script("arguments[0].remove();", black_section)
-    print("Successfully removed ad section with ID 'ad-container'.")
-except Exception as e:
-    print(f"Failed to remove ad section: {e}")
-
 # Step 5: Save the expanded table HTML
+RAW_DATA_DIR = os.path.join(PROJECT_ROOT, "data", "raw")
+os.makedirs(RAW_DATA_DIR, exist_ok=True)
+PMI_HTML_FILE = os.path.join(RAW_DATA_DIR, "m_pmi.html")
+
 html_content = driver.page_source
-with open("m_pmi.html", "w", encoding="utf-8") as file:
+with open(PMI_HTML_FILE, "w", encoding="utf-8") as file:
     file.write(html_content)
 
-print("Successfully saved to 'm_pmi.html'.")
+print(f"Successfully saved to '{PMI_HTML_FILE}'.")
 
 # Step 6: Close the browser
 driver.quit()
