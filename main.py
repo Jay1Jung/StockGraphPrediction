@@ -81,6 +81,22 @@ def run_unemployment():
         print("Error running unemployment.py:")
         print(e.stderr)
 
+def run_html2csv():
+    """Run the html2csv.py script."""
+    SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "refine_data", "html2csv.py")
+    try:
+        result = subprocess.run(
+            ["python3", SCRIPT_PATH],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        print("html2csv.py executed successfully:")
+        print(result.stdout)
+    except subprocess.CalledProcessError as e:
+        print("Error running html2csv.py:")
+        print(e.stderr)
+
 # Step 4: Main function
 def main():
     parser = argparse.ArgumentParser(description="StockGraphPrediction Main Script")
@@ -99,8 +115,9 @@ def main():
         run_m_pmi2html()  # Call m_pmi2html.py
         run_s_pmi2html()  # Call s_pmi2html.py
     elif args.mode == "refine":
-        print("Running data processing...")
-        run_unemployment()  # Call unemployment.py 
+        print("Running data refining...")
+        # run_unemployment()  # Call unemployment.py
+        run_html2csv()  # Call html2csv.py
     elif args.mode == "R":
         print("Running R analysis...")
         run_r_analysis()

@@ -1,8 +1,22 @@
+import os
 import csv
 import matplotlib.pyplot as plt
 from bs4 import BeautifulSoup
 from datetime import datetime
 import pandas as pd
+
+# Set up dynamic paths
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
+RAW_DATA_DIR = os.path.join(PROJECT_ROOT, "data", "raw")
+PROCESSED_DATA_DIR = os.path.join(PROJECT_ROOT, "data", "processed")
+os.makedirs(PROCESSED_DATA_DIR, exist_ok=True)
+
+# File paths
+manufacturing_file = os.path.join(RAW_DATA_DIR, "m_pmi.html")
+services_file = os.path.join(RAW_DATA_DIR, "s_pmi.html")
+manufacturing_csv = os.path.join(PROCESSED_DATA_DIR, "manufacturing_pmi.csv")
+services_csv = os.path.join(PROCESSED_DATA_DIR, "services_pmi.csv")
+plot_file = os.path.join(PROCESSED_DATA_DIR, "pmi_comparison_plot.png")
 
 def extract_pmi_data(file_path):
     """Extract PMI data (Date, Actual, Forecast, Previous) from an HTML file."""
@@ -38,21 +52,16 @@ def extract_pmi_data(file_path):
     return data
 
 # Extract data for Manufacturing and Services PMI
-manufacturing_file = "m_pmi.html"
-services_file = "s_pmi.html"
-
 manufacturing_data = extract_pmi_data(manufacturing_file)
 services_data = extract_pmi_data(services_file)
 
 # Save Manufacturing PMI to CSV
-manufacturing_csv = "manufacturing_pmi.csv"
 with open(manufacturing_csv, "w", newline="", encoding="utf-8") as csvfile:
     writer = csv.writer(csvfile)
     writer.writerow(["Date", "Actual", "Forecast", "Previous"])
     writer.writerows(manufacturing_data)
 
 # Save Services PMI to CSV
-services_csv = "services_pmi.csv"
 with open(services_csv, "w", newline="", encoding="utf-8") as csvfile:
     writer = csv.writer(csvfile)
     writer.writerow(["Date", "Actual", "Forecast", "Previous"])
@@ -83,7 +92,6 @@ plt.legend()
 plt.tight_layout()
 
 # Save the plot
-plot_file = "pmi_comparison_plot.png"
 plt.savefig(plot_file)
 print(f"Plot saved as {plot_file}")
 
