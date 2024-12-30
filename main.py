@@ -17,6 +17,22 @@ os.makedirs(RAW_DATA_DIR, exist_ok=True)
 os.makedirs(PROCESSED_DATA_DIR, exist_ok=True)
 
 # Step 3: Define functions for modular tasks
+def run_ngdp2csv():
+    """Run ngdp2csv.py script"""
+    SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "scrap_data", "ngdp2csv.py")
+    try:
+        result = subprocess.run(
+            ["python3", SCRIPT_PATH],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        print("ngdp2csv.py executed successfully:")
+        print(result.stdout)
+    except subprocess.CalledProcessError as e:
+        print("Error running ngdp2csv.py:")
+        print(e.stderr)
+
 def run_r_analysis():
     """Run the R script for stepwise regression."""
     R_SCRIPT_PATH = os.path.join(PROJECT_ROOT, "analysis", "R", "stepwise_regression.R")
@@ -272,12 +288,13 @@ def main():
     # Route to the correct functionality
     if args.mode == "scrap":
         print("Running data scrapping...")
+        run_ngdp2csv() # Call ngdp2csv.py
         # run_m_pmi2html()  # Call m_pmi2html.py
         # run_s_pmi2html()  # Call s_pmi2html.py
         # run_cpi2html()  # Call cpi2html.py
-        # run_fomc_IRD2html()
-        # run_unrate2html()
-        run_leadingidx2html()
+        # run_fomc_IRD2html()  # Call fomc_IRD2html.py
+        # run_unrate2html()  # Call unrate2html.py
+        # run_leadingidx2html()  #Call leadingidx2html.py
     elif args.mode == "refine":
         print("Running data refining...")
         run_unemployment()  # Call unemployment.py
