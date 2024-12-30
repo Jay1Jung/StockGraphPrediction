@@ -161,22 +161,6 @@ def run_unemployment():
         print("Error running unemployment.py:")
         print(e.stderr)
 
-def run_html2csv():
-    """Run the html2csv.py script."""
-    SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "refine_data", "html2csv.py")
-    try:
-        result = subprocess.run(
-            ["python3", SCRIPT_PATH],
-            capture_output=True,
-            text=True,
-            check=True
-        )
-        print("html2csv.py executed successfully:")
-        print(result.stdout)
-    except subprocess.CalledProcessError as e:
-        print("Error running html2csv.py:")
-        print(e.stderr)
-
 def run_snp2csv():
     """Run the snp2csv.py script."""
     SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "refine_data", "snp2csv.py")
@@ -312,8 +296,8 @@ def main():
         "-mode",
         type=str,
         required=True,
-        choices=["scrap", "refine", "R", "bond"],
-        help="Mode to run: scarp, refine, R, or bond"
+        choices=["scrap", "refine", "R", "bond", "plot"],
+        help="Mode to run: scarp, refine, R, bond, or plot"
     )
     args = parser.parse_args()
 
@@ -332,7 +316,6 @@ def main():
         # run_unemployment()  # Call unemployment.py
         run_m_pmi()
         run_s_pmi()
-        # run_html2csv()  # Call html2csv.py
         # run_snp2csv()  # Call snp2csv.py
         # run_gdp_cpi2csv()  # Call gdp_cpi2csv.py
         # run_pmi2csv()  # Call pmi2csv.py * not resolved
@@ -345,6 +328,8 @@ def main():
     elif args.mode == "bond":
         print("Running bond analysis...")
         # Placeholder for bond analysis functionality
+    elif args.mode == "plot":
+        print("Running plot")
     else:
         print("Invalid mode. Use -h for help.")
 
