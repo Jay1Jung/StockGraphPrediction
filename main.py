@@ -49,6 +49,22 @@ def run_m_pmi2html():
         print("Error running m_pmi2html.py:")
         print(e.stderr)
 
+def run_s_pmi2html():
+    """Run the s_pmi2html.py script."""
+    SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "fetch_data", "s_pmi2html.py")
+    try:
+        result = subprocess.run(
+            ["python3", SCRIPT_PATH],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        print("s_pmi2html.py executed successfully:")
+        print(result.stdout)
+    except subprocess.CalledProcessError as e:
+        print("Error running s_pmi2html.py:")
+        print(e.stderr)
+
 # Step 4: Main function
 def main():
     parser = argparse.ArgumentParser(description="StockGraphPrediction Main Script")
@@ -64,7 +80,8 @@ def main():
     # Route to the correct functionality
     if args.mode == "dataprocess":
         print("Running data processing...")
-        run_m_pmi2html()  # Call the m_pmi2html function
+        #run_m_pmi2html()  # Call the m_pmi2html function
+        run_s_pmi2html()  # Call the s_pmi2html function
     elif args.mode == "R":
         print("Running R analysis...")
         run_r_analysis()

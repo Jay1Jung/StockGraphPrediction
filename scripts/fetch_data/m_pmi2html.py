@@ -42,10 +42,10 @@ try:
             )
             driver.execute_script("arguments[0].scrollIntoView();", show_more_button)
             driver.execute_script("arguments[0].click();", show_more_button)
-            print("Clicked 'Show More' link.")
+            #print("Clicked 'Show More' link.")
             time.sleep(2)
         except TimeoutException:
-            print("No more 'Show More' links to click. Exiting loop.")
+            #print("No more 'Show More' links to click. Exiting loop.")
             break
 except Exception as e:
     print(f"Error: {e}")

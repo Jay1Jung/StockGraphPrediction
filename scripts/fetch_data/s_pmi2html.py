@@ -1,3 +1,4 @@
+import os
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
@@ -5,12 +6,15 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
-import os
 import time
 
-# Step 1: Set up Selenium WebDriver
-chrome_driver_path = os.path.expanduser("~/Documents/StockGraphPrediction/chromedriver-mac-x64/chromedriver")
-service = Service(chrome_driver_path)
+# Step 1: Set up paths dynamically
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))  # Two levels up from this file
+DRIVERS_DIR = os.path.join(PROJECT_ROOT, "drivers")
+CHROMEDRIVER_PATH = os.path.join(DRIVERS_DIR, "chromedriver-mac-x64", "chromedriver")
+
+# Step 2: Set up Selenium WebDriver
+service = Service(CHROMEDRIVER_PATH)
 
 options = Options()
 options.add_argument("--headless")
@@ -25,10 +29,6 @@ options.add_argument(
 driver = webdriver.Chrome(service=service, options=options)
 driver.set_page_load_timeout(180)
 
-# Step 2: Open the URL
-url = "https://www.investing.com/economic-calendar/services-pmi-1062"
-driver.get(url)
-
 # Step 3: Locate and click "Show More" until no more buttons
 try:
     while True:
@@ -38,10 +38,10 @@ try:
             )
             driver.execute_script("arguments[0].scrollIntoView();", show_more_button)
             driver.execute_script("arguments[0].click();", show_more_button)
-            print("Clicked 'Show More' link.")
+            # print("Clicked 'Show More' link.")
             time.sleep(2)
         except TimeoutException:
-            print("No more 'Show More' links to click. Exiting loop.")
+            # print("No more 'Show More' links to click. Exiting loop.")
             break
 except Exception as e:
     print(f"Error: {e}")
