@@ -15,7 +15,7 @@ DRIVERS_DIR = os.path.join(PROJECT_ROOT, "drivers")
 CHROMEDRIVER_PATH = os.path.join(DRIVERS_DIR, "chromedriver-mac-x64", "chromedriver")
 RAW_DATA_DIR = os.path.join(PROJECT_ROOT, "data", "raw")
 os.makedirs(RAW_DATA_DIR, exist_ok=True)
-PMI_HTML_FILE = os.path.join(RAW_DATA_DIR, "m_pmi_table.html")
+INTEREST_RATE_HTML_FILE = os.path.join(RAW_DATA_DIR, "interest_rate_decision_table.html")
 
 # Step 2: Set up Selenium WebDriver
 service = Service(CHROMEDRIVER_PATH)
@@ -35,10 +35,10 @@ options.add_argument(
 )
 
 driver = webdriver.Chrome(service=service, options=options)
-driver.set_page_load_timeout(300)  # Increased timeout for complex pages
+driver.set_page_load_timeout(300)
 
 # Step 3: Open the URL
-url = "https://www.investing.com/economic-calendar/manufacturing-pmi-829"
+url = "https://www.investing.com/economic-calendar/interest-rate-decision-168"
 try:
     driver.get(url)
 
@@ -52,20 +52,20 @@ try:
             driver.execute_script("arguments[0].click();", show_more_button)
             time.sleep(2)  # Allow time for content to load
         except TimeoutException:
-            print("No more 'Show More' buttons to click.")
+            print("No more 'Show More' links to click.")
             break
 
     # Step 5: Extract the desired table using BeautifulSoup
     html_content = driver.page_source
     soup = BeautifulSoup(html_content, "html.parser")
-    table = soup.find("table", {"id": "eventHistoryTable829"})
+    table = soup.find("table", {"id": "eventHistoryTable168"})
 
     if table:
         # Save the extracted table as a standalone HTML file
-        with open(PMI_HTML_FILE, "w", encoding="utf-8") as file:
+        with open(INTEREST_RATE_HTML_FILE, "w", encoding="utf-8") as file:
             file.write(str(table))
-        print(f"Extracted PMI table saved to '{PMI_HTML_FILE}'.")
+        print(f"Extracted Interest Rate Decision table saved to '{INTEREST_RATE_HTML_FILE}'.")
     else:
-        print("Error: Table with id 'eventHistoryTable829' not found.")
+        print("Error: Table with id 'eventHistoryTable168' not found.")
 finally:
     driver.quit()

@@ -96,4 +96,4 @@ plt.savefig(plot_file)
 print(f"Plot saved as {plot_file}")
 
 # Show the plot
-plt.show()
+# plt.show()

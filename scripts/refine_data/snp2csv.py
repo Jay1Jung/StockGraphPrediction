@@ -18,9 +18,11 @@ os.makedirs(PLOT_DIR, exist_ok=True)
 sp500 = yf.Ticker("^GSPC")  # Yahoo Finance symbol for S&P 500
 data = sp500.history(period="10y")  # Get 10 years of historical data
 
+"""
 # Preview the data
 print("S&P 500 data preview:")
 print(data.head())
+"""
 
 # Step 3: Save data to CSV in the processed data directory
 csv_file = os.path.join(PROCESSED_DATA_DIR, "sp500_data.csv")
@@ -40,4 +42,4 @@ plt.tight_layout()
 plot_file = os.path.join(PLOT_DIR, "sp500_closing_prices.png")
 plt.savefig(plot_file)
 print(f"Plot saved as {plot_file}")
-plt.show()
+# plt.show()  # printing plot

@@ -15,8 +15,10 @@ expanded_output_path = os.path.join(PROCESSED_DATA_DIR, "UnemploymentRate.csv")
 # Step 2: Load the data
 unemployment_rate_data = pd.read_csv(unemployment_rate_file_path)
 
+"""
 # Step 3: Reshape the data (melt years into rows)
 print("Original columns:", unemployment_rate_data.columns)
+"""
 
 # Melt the year columns into a long format
 melted_data = unemployment_rate_data.melt(

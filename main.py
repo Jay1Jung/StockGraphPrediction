@@ -65,6 +65,70 @@ def run_s_pmi2html():
         print("Error running s_pmi2html.py:")
         print(e.stderr)
 
+def run_cpi2html():
+    """Run cpi2csv script."""
+    SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "scrap_data", "cpi2csv.py")
+    try:
+        result = subprocess.run(
+            ["python3", SCRIPT_PATH],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        print("cpi2csv.py executed successfully:")
+        print(result.stdout)
+    except subprocess.CalledProcessError as e:
+        print("Error running cpi2csv.py:")
+        print(e.stderr)
+
+def run_fomc_IRD2html():
+    """Run fomc_IRD2html script."""
+    SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "scrap_data", "fomc_IRD2html.py")
+    try:
+        result = subprocess.run(
+            ["python3", SCRIPT_PATH],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        print("fomc_IRD2html.py executed successfully:")
+        print(result.stdout)
+    except subprocess.CalledProcessError as e:
+        print("Error running fomc_IRD2html.py:")
+        print(e.stderr)
+
+def run_unrate2html():
+    """Run unrate2html script."""
+    SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "scrap_data", "unrate2html.py")
+    try:
+        result = subprocess.run(
+            ["python3", SCRIPT_PATH],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        print("unrate2html.py executed successfully:")
+        print(result.stdout)
+    except subprocess.CalledProcessError as e:
+        print("Error running unrate2html.py:")
+        print(e.stderr)
+
+def run_leadingidx2html():
+    """Run leadingidx2html script."""
+    SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "scrap_data", "leadingidx2html.py")
+    try:
+        result = subprocess.run(
+            ["python3", SCRIPT_PATH],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        print("leadingidx2html.py executed successfully:")
+        print(result.stdout)
+    except subprocess.CalledProcessError as e:
+        print("Error running leadingidx2html.py:")
+        print(e.stderr)
+
 def run_unemployment():
     """Run the unemployment.py script."""
     SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "refine_data", "unemployment.py")
@@ -208,8 +272,12 @@ def main():
     # Route to the correct functionality
     if args.mode == "scrap":
         print("Running data scrapping...")
-        run_m_pmi2html()  # Call m_pmi2html.py
-        run_s_pmi2html()  # Call s_pmi2html.py
+        # run_m_pmi2html()  # Call m_pmi2html.py
+        # run_s_pmi2html()  # Call s_pmi2html.py
+        # run_cpi2html()  # Call cpi2html.py
+        # run_fomc_IRD2html()
+        # run_unrate2html()
+        run_leadingidx2html()
     elif args.mode == "refine":
         print("Running data refining...")
         run_unemployment()  # Call unemployment.py

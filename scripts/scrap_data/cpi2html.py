@@ -9,15 +9,15 @@ from selenium.common.exceptions import TimeoutException
 from bs4 import BeautifulSoup
 import time
 
-# Step 1: Set up paths dynamically
-PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))  # Two levels up from this file
+# Set up paths
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
 DRIVERS_DIR = os.path.join(PROJECT_ROOT, "drivers")
 CHROMEDRIVER_PATH = os.path.join(DRIVERS_DIR, "chromedriver-mac-x64", "chromedriver")
 RAW_DATA_DIR = os.path.join(PROJECT_ROOT, "data", "raw")
 os.makedirs(RAW_DATA_DIR, exist_ok=True)
-PMI_HTML_FILE = os.path.join(RAW_DATA_DIR, "m_pmi_table.html")
+CPI_HTML_FILE = os.path.join(RAW_DATA_DIR, "us_cpi_table.html")
 
-# Step 2: Set up Selenium WebDriver
+# Set up Selenium WebDriver
 service = Service(CHROMEDRIVER_PATH)
 
 options = Options()
@@ -25,7 +25,7 @@ options.add_argument("--headless")
 options.add_argument("--disable-gpu")
 options.add_argument("--no-sandbox")
 options.add_argument("--disable-dev-shm-usage")
-options.add_argument("--disable-images")  # Reduce rendering overhead
+options.add_argument("--disable-images")
 options.add_argument("--blink-settings=imagesEnabled=false")
 options.add_argument("--disable-extensions")
 options.add_argument("--disable-software-rasterizer")
@@ -35,14 +35,20 @@ options.add_argument(
 )
 
 driver = webdriver.Chrome(service=service, options=options)
-driver.set_page_load_timeout(300)  # Increased timeout for complex pages
+driver.set_page_load_timeout(300)
 
-# Step 3: Open the URL
-url = "https://www.investing.com/economic-calendar/manufacturing-pmi-829"
+# Open the URL
+url = "https://www.investing.com/economic-calendar/cpi-733"
 try:
     driver.get(url)
 
-    # Step 4: Locate and click "Show More" until no more buttons
+    # Wait for the table to load
+    WebDriverWait(driver, 300).until(
+        EC.presence_of_element_located((By.ID, "eventHistoryTable733"))
+    )
+    print("Table loaded successfully.")
+
+    # Expand the "Show More" sections
     while True:
         try:
             show_more_button = WebDriverWait(driver, 10).until(
@@ -50,22 +56,21 @@ try:
             )
             driver.execute_script("arguments[0].scrollIntoView();", show_more_button)
             driver.execute_script("arguments[0].click();", show_more_button)
-            time.sleep(2)  # Allow time for content to load
+            time.sleep(2)
         except TimeoutException:
             print("No more 'Show More' buttons to click.")
             break
 
-    # Step 5: Extract the desired table using BeautifulSoup
+    # Extract the table
     html_content = driver.page_source
     soup = BeautifulSoup(html_content, "html.parser")
-    table = soup.find("table", {"id": "eventHistoryTable829"})
+    table = soup.find("table", {"id": "eventHistoryTable733"})
 
     if table:
-        # Save the extracted table as a standalone HTML file
-        with open(PMI_HTML_FILE, "w", encoding="utf-8") as file:
+        with open(CPI_HTML_FILE, "w", encoding="utf-8") as file:
             file.write(str(table))
-        print(f"Extracted PMI table saved to '{PMI_HTML_FILE}'.")
+        print(f"Extracted CPI table saved to '{CPI_HTML_FILE}'.")
     else:
-        print("Error: Table with id 'eventHistoryTable829' not found.")
+        print("Error: Table with id 'eventHistoryTable733' not found.")
 finally:
     driver.quit()
