@@ -177,9 +177,9 @@ def run_sp500():
         print("Error running sp500.py:")
         print(e.stderr)
 
-def run_cpi2csv():
-    """Run cpi2csv script."""
-    SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "refine_data", "cpi2csv.py")
+def run_cpi():
+    """Run cpi.py script."""
+    SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "refine_data", "cpi.py")
     try:
         result = subprocess.run(
             ["python3", SCRIPT_PATH],
@@ -187,15 +187,15 @@ def run_cpi2csv():
             text=True,
             check=True
         )
-        print("cpi2csv executed successfully:")
+        print("cpi executed successfully:")
         print(result.stdout)
     except subprocess.CalledProcessError as e:
-        print("Error running cpi2csv.py:")
+        print("Error running cpi.py:")
         print(e.stderr)
 
-def run_gdp2csv():
-    """Run gdp2csv script."""
-    SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "refine_data", "gdp2csv.py")
+def run_nominal_gdp():
+    """Run nominal_gdp script."""
+    SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "refine_data", "nominal_gdp.py")
     try:
         result = subprocess.run(
             ["python3", SCRIPT_PATH],
@@ -203,10 +203,10 @@ def run_gdp2csv():
             text=True,
             check=True
         )
-        print("gdp2csv executed successfully:")
+        print("nominal_gdp executed successfully:")
         print(result.stdout)
     except subprocess.CalledProcessError as e:
-        print("Error running gdp2csv.py:")
+        print("Error running nominal_gdp.py:")
         print(e.stderr)
 
 def run_m_pmi():
@@ -257,9 +257,9 @@ def run_pmi2csv():
         print("Error running pmi2csv.py:")
         print(e.stderr)
 
-def run_dff2csv():
-    """Run dff2csv.py script."""
-    SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "refine_data", "dff2csv.py")
+def run_federal_interest_rate():
+    """Run federal_interest_rate.py script."""
+    SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "refine_data", "federal_interest_rate.py")
     try:
         result = subprocess.run(
             ["python3", SCRIPT_PATH],
@@ -267,15 +267,15 @@ def run_dff2csv():
             text=True,
             check=True
         )
-        print("dff2csv.py executed successfully:")
+        print("federal_interest_rate.py executed successfully:")
         print(result.stdout)
     except subprocess.CalledProcessError as e:
-        print("Error running dff2csv.py:")
+        print("Error running federal_interest_rate.py:")
         print(e.stderr)
 
-def run_leading_index2csv():
-    """Run leading_index2.py script."""
-    SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "refine_data", "leading_index2csv.py")
+def run_leading_index():
+    """Run leading_index.py script."""
+    SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "refine_data", "leading_index.py")
     try:
         result = subprocess.run(
             ["python3", SCRIPT_PATH],
@@ -283,10 +283,10 @@ def run_leading_index2csv():
             text=True,
             check=True
         )
-        print("leading_index2.py executed successfully:")
+        print("leading_index.py executed successfully:")
         print(result.stdout)
     except subprocess.CalledProcessError as e:
-        print("Error running leading_index2.py:")
+        print("Error running leading_index.py:")
         print(e.stderr)
 
 def run_closing_price():
@@ -329,16 +329,15 @@ def main():
         run_leadingidx2html()  #Call leadingidx2html.py
     elif args.mode == "refine":
         print("Running data refining...")
-        # run_unemployment()  # Call unemployment.py
-        # run_m_pmi()
-        # run_s_pmi()
-        # run_sp500()  # Call snp2csv.py *
-        # run_cpi2csv()  # Call cpi2csv.py
-        # run_gdp2csv()  # Call gdp2csv.py 
-        # run_leading_index2csv()  # Call leading_index2csv.py
-        # * not resoved
-        # run_dff2csv()  # Call dff2csv.py
-        # run_pmi2csv()  # Call pmi2csv.py * not resolved
+        run_unemployment()  # Call unemployment.py
+        run_m_pmi()
+        run_s_pmi()
+        run_sp500()  # Call sp500.py
+        run_cpi()  # Call cpi.py
+        run_nominal_gdp()  # Call gdp2csv.py 
+        run_leading_index()  # Call leading_index.py
+        run_federal_interest_rate()  # Call federal_interest_rate.py
+        # *closing_price from stock extracted by ticker *                
         # run_closing_price()  # Call closing_price.py * not resolved ** Should be moved to refine
     elif args.mode == "R":
         print("Running R analysis...")
