@@ -161,9 +161,9 @@ def run_unemployment():
         print("Error running unemployment.py:")
         print(e.stderr)
 
-def run_snp2csv():
-    """Run the snp2csv.py script."""
-    SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "refine_data", "snp2csv.py")
+def run_sp500():
+    """Run the sp500.py script."""
+    SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "refine_data", "sp500.py")
     try:
         result = subprocess.run(
             ["python3", SCRIPT_PATH],
@@ -171,15 +171,15 @@ def run_snp2csv():
             text=True,
             check=True
         )
-        print("snp2csv.py executed successfully:")
+        print("sp500.py executed successfully:")
         print(result.stdout)
     except subprocess.CalledProcessError as e:
-        print("Error running snp2csv.py:")
+        print("Error running sp500.py:")
         print(e.stderr)
 
-def run_gdp_cpi2csv():
-    """Run the gdp_cpi2csv.py script."""
-    SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "refine_data", "gdp_cpi2csv.py")
+def run_cpi2csv():
+    """Run cpi2csv script."""
+    SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "refine_data", "cpi2csv.py")
     try:
         result = subprocess.run(
             ["python3", SCRIPT_PATH],
@@ -187,10 +187,26 @@ def run_gdp_cpi2csv():
             text=True,
             check=True
         )
-        print("gdp_cpi2csv.py executed successfully:")
+        print("cpi2csv executed successfully:")
         print(result.stdout)
     except subprocess.CalledProcessError as e:
-        print("Error running gdp_cpi2csv.py:")
+        print("Error running cpi2csv.py:")
+        print(e.stderr)
+
+def run_gdp2csv():
+    """Run gdp2csv script."""
+    SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "refine_data", "gdp2csv.py")
+    try:
+        result = subprocess.run(
+            ["python3", SCRIPT_PATH],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        print("gdp2csv executed successfully:")
+        print(result.stdout)
+    except subprocess.CalledProcessError as e:
+        print("Error running gdp2csv.py:")
         print(e.stderr)
 
 def run_m_pmi():
@@ -314,13 +330,15 @@ def main():
     elif args.mode == "refine":
         print("Running data refining...")
         # run_unemployment()  # Call unemployment.py
-        run_m_pmi()
-        run_s_pmi()
-        # run_snp2csv()  # Call snp2csv.py
-        # run_gdp_cpi2csv()  # Call gdp_cpi2csv.py
-        # run_pmi2csv()  # Call pmi2csv.py * not resolved
-        # run_dff2csv()  # Call dff2csv.py
+        # run_m_pmi()
+        # run_s_pmi()
+        # run_sp500()  # Call snp2csv.py *
+        # run_cpi2csv()  # Call cpi2csv.py
+        # run_gdp2csv()  # Call gdp2csv.py 
         # run_leading_index2csv()  # Call leading_index2csv.py
+        # * not resoved
+        # run_dff2csv()  # Call dff2csv.py
+        # run_pmi2csv()  # Call pmi2csv.py * not resolved
         # run_closing_price()  # Call closing_price.py * not resolved ** Should be moved to refine
     elif args.mode == "R":
         print("Running R analysis...")
