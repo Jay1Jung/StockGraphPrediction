@@ -1,71 +1,92 @@
 import pandas as pd
 import os
 
-def load_and_merge_datasets(base_dir):
-    """Load and merge datasets from the specified directory."""
-    # File names relative to the base directory
-    files = {
-        "cpi_file": "CPI_expanded.csv",
-        "dff_file": "DFF_transformed.csv",
-        "gdp_file": "GDP_expanded.csv",
-        "leading_index_file": "LeadingIndex_expanded.csv",
-        "manufacturing_pmi_file": "manufacturing_pmi.csv",
-        "services_pmi_file": "services_pmi.csv",
-        "unemployment_rate_file": "UnemploymentRate.csv",
-        "snp_file": "sp500_data.csv"
-    }
 
-    # Load datasets
-    datasets = {}
-    for name, file in files.items():
-        file_path = os.path.join(base_dir, file)
-        if os.path.exists(file_path):
-            datasets[name] = pd.read_csv(file_path)
-        else:
-            print(f"Warning: {file} not found at {file_path}. Skipping...")
-            datasets[name] = pd.DataFrame()  # Placeholder for missing data
+def process_files(folder_path, output_file):
+    merged_data = pd.DataFrame()
 
-    # Merge datasets on Year, Month, Day
-    merged_data = datasets["cpi_file"]
+    for file_name in os.listdir(folder_path):
+        file_path = os.path.join(folder_path, file_name)
 
-    for key, data in datasets.items():
-        if not data.empty:
-            merged_data = pd.merge(merged_data, data, on=['Year', 'Month', 'Day'], how='outer')
+        if "CPI" in file_name:
+            df = pd.read_csv(file_path)
+            df = df.rename(columns={"Actual": "CPI"})
+            merged_data = pd.concat([merged_data, df], ignore_index=True, axis=0)
 
-    # Rename columns
-    merged_data.rename(columns={
-        'CPI_x': 'CPI',
-        'DFF': 'DfF',
-        'CPI_y': 'GDP',
-        'Actual_x': 'Manufacturing_PMI',
-        'Actual_y': 'Services_PMI',
-        'Unemployment_rate': 'Unemployment_Rate'
-    }, inplace=True, errors="ignore")  # Avoid errors if columns don't exist
+        elif "DFF" in file_name:
+            df = pd.read_csv(file_path)
+            merged_data = pd.merge(merged_data, df, on=["Year", "Month", "Day"], how="outer")
 
-    # Handle missing values (optional)
-    merged_data.fillna(method='ffill', inplace=True)  # Forward fill missing values
+        elif "GDP" in file_name:
+            df = pd.read_csv(file_path)
+            merged_data = pd.merge(merged_data, df, on=["Year", "Month", "Day"], how="outer")
 
-    return merged_data
+        elif "Leading_index" in file_name:
+            df = pd.read_csv(file_path)
+            df = df.rename(columns={"Actual": "Leading_Index"})
+            merged_data = pd.merge(merged_data, df, on=["Year", "Month", "Day"], how="outer")
 
+        elif "manufacturing_pmi" in file_name:
+            df = pd.read_csv(file_path)
+            df["Date"] = pd.to_datetime(df["Date"])
+            df["Year"] = df["Date"].dt.year
+            df["Month"] = df["Date"].dt.month
+            df["Day"] = df["Date"].dt.day
+            df = df.rename(columns={"Actual": "Manufacturing_PMI"})
+            df = df[["Year", "Month", "Day", "Manufacturing_PMI"]]
+            merged_data = pd.merge(merged_data, df, on=["Year", "Month", "Day"], how="outer")
 
-def main():
-    # Prompt the user to specify the data directory
-    base_dir = input("Enter the base directory for datasets (default is './data/raw'): ").strip()
-    if not base_dir:
-        base_dir = './data/raw'
+        elif "services_pmi" in file_name:
+            df = pd.read_csv(file_path)
+            df["Date"] = pd.to_datetime(df["Date"])
+            df["Year"] = df["Date"].dt.year
+            df["Month"] = df["Date"].dt.month
+            df["Day"] = df["Date"].dt.day
+            df = df.rename(columns={"Actual": "Services_PMI"})
+            df = df[["Year", "Month", "Day", "Services_PMI"]]
+            merged_data = pd.merge(merged_data, df, on=["Year", "Month", "Day"], how="outer")
 
-    if not os.path.exists(base_dir):
-        print(f"Error: The specified directory '{base_dir}' does not exist.")
-        return
+        elif "sp500_data" in file_name:
+            df = pd.read_csv(file_path)
+            df["Date"] = pd.to_datetime(df["Date"])
+            df["Year"] = df["Date"].dt.year
+            df["Month"] = df["Date"].dt.month
+            df["Day"] = df["Date"].dt.day
+            df = df.rename(columns={"Close": "SP500_Close"})
+            df = df[["Year", "Month", "Day", "SP500_Close"]]
+            merged_data = pd.merge(merged_data, df, on=["Year", "Month", "Day"], how="outer")
 
-    try:
-        merged_data = load_and_merge_datasets(base_dir)
-        output_path = os.path.join(base_dir, 'merged_data.csv')
-        merged_data.to_csv(output_path, index=False)
-        print(f"All datasets have been merged and saved to {output_path}")
-    except Exception as e:
-        print(f"An error occurred: {e}")
+        elif "UnemploymentRate" in file_name:
+            df = pd.read_csv(file_path)
+            extracted_dates = df["Release Date"].str.extract(r"(?P<Month>[A-Za-z]{3}) (?P<Day>\d+), (?P<Year>\d+)")
+            extracted_dates.dropna(inplace=True)
+            extracted_dates["Month"] = pd.to_datetime(extracted_dates["Month"], format="%b").dt.month
+            extracted_dates["Day"] = extracted_dates["Day"].astype(int)
+            extracted_dates["Year"] = extracted_dates["Year"].astype(int)
+            df = pd.concat([df, extracted_dates], axis=1)
+            df = df.rename(columns={"Actual": "Unemployment_Rate"})
+            df = df[["Year", "Month", "Day", "Unemployment_Rate"]]
+            merged_data = pd.merge(merged_data, df, on=["Year", "Month", "Day"], how="outer")
+
+    merged_data.fillna(method="ffill", inplace=True)
+    os.makedirs(os.path.dirname(output_file), exist_ok=True)
+
+    if not os.path.exists(output_file):
+        with open(output_file, 'w') as f:
+            pass
+
+    merged_data.to_csv(output_file, index=False)
+    print(f"Merged data has been saved to {output_file}")
 
 
 if __name__ == "__main__":
-    main()
+    folder_path = input("Enter the folder path containing the CSV files: ").strip()
+    output_file = input("Enter the output file path: ").strip()
+
+    if not os.path.exists(folder_path):
+        print(f"Error: The folder {folder_path} does not exist.")
+    else:
+        try:
+            process_files(folder_path, output_file)
+        except Exception as e:
+            print(f"An error occurred: {e}")
