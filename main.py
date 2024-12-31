@@ -289,6 +289,21 @@ def run_closing_price():
         print("Error running closing_price.py:")
         print(e.stderr)
 
+def run_sp500_tickers2txt():
+    SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "scrap_data", "sp500_tickers2txt.py")
+    try:
+        result = subprocess.run(
+            ["python3", SCRIPT_PATH],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        print("sp500_tickers2txt executed successfully:")
+        print(result.stdout)
+    except subprocess.CalledProcessError as e:
+        print("Error running sp500_tickers2txt.py:")
+        print(e.stderr)
+
 # 4. Additional placeholders for new -stocks commands
 def run_macro():
     """
@@ -354,6 +369,7 @@ def main():
     # Otherwise, fall back to mode-based logic
     if args.mode == "scrap":
         print("Running data scrapping...")
+        """
         run_ngdp2csv()
         run_m_pmi2html()
         run_s_pmi2html()
@@ -361,6 +377,8 @@ def main():
         run_fomc_IRD2html()
         run_unrate2html()
         run_leadingidx2html()
+        """
+        run_sp500_tickers2txt()
 
     elif args.mode == "refine":
         print("Running data refining...")
