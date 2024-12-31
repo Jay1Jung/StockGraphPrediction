@@ -84,11 +84,15 @@ def run_s_pmi2html():
 def run_cpi2html():
 <<<<<<< HEAD
     """Run cpi2csv script."""
+<<<<<<< HEAD
     SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "scrap_data", "cpi2csv.py")
 =======
     """Run cpi2html script."""
     SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "scrap_data", "cpi2html.py")
 >>>>>>> c8ec5ed (initiated stock sub-project)
+=======
+    SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "scrap_data", "cpi2html.py")
+>>>>>>> d83a3d9 (Checked -scrap -refine)
     try:
         result = subprocess.run(
             ["python3", SCRIPT_PATH],
@@ -96,10 +100,10 @@ def run_cpi2html():
             text=True,
             check=True
         )
-        print("cpi2csv.py executed successfully:")
+        print("cpi2html.py executed successfully:")
         print(result.stdout)
     except subprocess.CalledProcessError as e:
-        print("Error running cpi2csv.py:")
+        print("Error running cpi2html.py:")
         print(e.stderr)
 
 def run_fomc_IRD2html():
