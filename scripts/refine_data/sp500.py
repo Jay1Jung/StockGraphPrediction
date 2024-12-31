@@ -25,7 +25,7 @@ print(data.head())
 """
 
 # Step 3: Save data to CSV in the processed data directory
-csv_file = os.path.join(PROCESSED_DATA_DIR, "sp500_data.csv")
+csv_file = os.path.join(PROCESSED_DATA_DIR, "sp500.csv")
 data.to_csv(csv_file)
 print(f"S&P 500 data saved to {csv_file}")
 

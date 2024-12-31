@@ -1,64 +1,61 @@
-from bs4 import BeautifulSoup
-import csv
 import os
+import csv
+from bs4 import BeautifulSoup
 
-# Prompt user to input the path of the HTML file
-html_file_path = input("Enter the path to the HTML file: ")
+# 1. Determine project paths
+PROJECT_ROOT = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), "../../")
+)
+RAW_DATA_DIR = os.path.join(PROJECT_ROOT, "data", "raw")
+PROCESSED_DATA_DIR = os.path.join(PROJECT_ROOT, "data", "processed")
 
-# Check if the file exists
-if not os.path.exists(html_file_path):
-    print(f"Error: The file {html_file_path} does not exist.")
+# 2. Define input/output files
+leading_index_html_path = os.path.join(RAW_DATA_DIR, "us_leading_index_table.html")
+leading_index_csv_path = os.path.join(PROCESSED_DATA_DIR, "us_leading_index.csv")
+
+# 3. Ensure the input file exists
+if not os.path.exists(leading_index_html_path):
+    print(f"Error: The file '{leading_index_html_path}' does not exist.")
     exit(1)
 
-# Load HTML content from the file
-with open(html_file_path, 'r', encoding='utf-8') as file:
+# 4. Read the HTML and parse with BeautifulSoup
+with open(leading_index_html_path, 'r', encoding='utf-8') as file:
     html_data = file.read()
 
-# Parse the HTML using BeautifulSoup
 soup = BeautifulSoup(html_data, 'html.parser')
 rows = soup.find_all('tr')
 
-# Extract data and prepare for CSV
+# 5. Extract data into a list for CSV
+#    Assuming first <td> is date, and third <td> is the leading index value.
 csv_data = []
 for row in rows:
     cells = row.find_all('td')
     if len(cells) < 3:
-        continue  # Skip rows that do not have enough columns
+        continue  # skip any row with fewer than 3 columns
     
-    date_cell = cells[0].get_text(strip=True)
-    actual_value = cells[2].get_text(strip=True)
-
-    # Parse the date (e.g., "Dec 11, 2024")
+    # Example date format: "Dec 11, 2024"
+    date_text = cells[0].get_text(strip=True)
+    leading_value = cells[2].get_text(strip=True)
+    
     try:
-        month, day, year = date_cell.split()[:3]
-        day = day.rstrip(',')  # Remove the comma from the day
+        month, day, year = date_text.split()[:3]
+        day = day.rstrip(',')  # remove comma (e.g. "11," -> "11")
     except ValueError:
-        print(f"Skipping invalid date format: {date_cell}")
+        # If the date doesn't match the expected format, skip
         continue
+    
+    csv_data.append([year, month, day, leading_value])
 
-    # Append extracted data to the list
-    csv_data.append([year, month, day, actual_value])
+# 6. Ensure output directory exists
+os.makedirs(PROCESSED_DATA_DIR, exist_ok=True)
 
-# Prompt user to specify output CSV file path
-output_file = input("Enter the path to save the output CSV file: ")
-
-# Ensure the directory exists
-output_dir = os.path.dirname(output_file)
-os.makedirs(output_dir, exist_ok=True)
-
-# Automatically create the output file if it doesn't exist
-if not os.path.exists(output_file):
-    print(f"The file {output_file} does not exist. Creating a new file...")
-    with open(output_file, 'w', newline='', encoding='utf-8') as file:
-        writer = csv.writer(file)
-        writer.writerow(['Year', 'Month', 'Day', 'Actual'])  # Write the header
-        # Optionally add a placeholder row if needed:
-        # writer.writerow(['Placeholder_Year', 'Placeholder_Month', 'Placeholder_Day', 'Placeholder_Actual'])
-
-# Save data to the specified CSV file
-with open(output_file, 'a', newline='', encoding='utf-8') as file:
+# 7. Write to CSV (overwrite or append—your choice).
+#    Below, we always overwrite the file with the newest results.
+with open(leading_index_csv_path, 'w', newline='', encoding='utf-8') as file:
     writer = csv.writer(file)
-    # Only append data if not a placeholder
-    writer.writerows(csv_data)  # Write the data
+    # Write a header row
+    writer.writerow(["Year", "Month", "Day", "LeadingIndex"])
+    # Write the extracted data
+    writer.writerows(csv_data)
 
-print(f"Data has been written to {output_file}")
+print(f"Leading index data has been written to '{leading_index_csv_path}'")
