@@ -328,15 +328,28 @@ def run_macro():
     # Add any others as needed
     print("[INFO] Macro tasks completed.\n")
 
-def run_ticker():
+def run_format():
     """
     Placeholder for handling stock data by tickers.
     Potentially calls closing_price.py or your incremental download script.
     """
     print("\n[INFO] Running ticker data tasks (stock scraping/refining)...")
     # For example:
-    
-    print("[INFO] Ticker tasks completed.\n")
+    SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "stock_data", "format.py")
+    try:
+        result = subprocess.run(
+            ["python3", SCRIPT_PATH],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        print("format.py executed successfully:")
+        print(result.stdout)
+    except subprocess.CalledProcessError as e:
+        print("Error running format.py:")
+        print(e.stderr)
+    # Add any others as needed
+    print("[INFO] Format tasks completed.\n")
 
 
 # 5: Main function
@@ -346,14 +359,14 @@ def main():
         "-mode",
         type=str,
         required=False,
-        choices=["scrap", "refine", "R", "bond", "plot"],
+        choices=["scrap", "refine", "R", "plot"],
         help="Mode to run: scrap, refine, R, bond, or plot (optional)."
     )
     parser.add_argument(
         "-stocks",
         type=str,
         required=False,
-        choices=["macro", "ticker"],
+        choices=["macro", "format"],
         help="Run stock-related commands: 'macro' or 'ticker'."
     )
     args = parser.parse_args()
@@ -362,8 +375,8 @@ def main():
     if args.stocks:
         if args.stocks == "macro":
             run_macro()
-        elif args.stocks == "ticker":
-            run_ticker()
+        elif args.stocks == "format":
+            run_format()
         return  # End here to skip the mode-based logic
 
     # Otherwise, fall back to mode-based logic
@@ -394,11 +407,7 @@ def main():
 
     elif args.mode == "R":
         print("Running R analysis...")
-        run_r_analysis()
-
-    elif args.mode == "bond":
-        print("Running bond analysis...")
-        # Placeholder for bond analysis functionality
+        run_r_analysis()        
 
     elif args.mode == "plot":
         print("Running plot")
