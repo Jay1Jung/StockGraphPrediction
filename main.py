@@ -16,7 +16,7 @@ CHROMEDRIVER_PATH = os.path.join(DRIVERS_DIR, "chromedriver-mac-x64", "chromedri
 os.makedirs(RAW_DATA_DIR, exist_ok=True)
 os.makedirs(PROCESSED_DATA_DIR, exist_ok=True)
 
-# Step 3: Define functions for modular tasks
+# 3. Define your modular run_* functions
 def run_ngdp2csv():
     """Run ngdp2csv.py script"""
     SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "scrap_data", "ngdp2csv.py")
@@ -34,7 +34,7 @@ def run_ngdp2csv():
         print(e.stderr)
 
 def run_r_analysis():
-    """Run the R script for stepwise regression."""
+    """Run R script for stepwise regression."""
     R_SCRIPT_PATH = os.path.join(PROJECT_ROOT, "analysis", "R", "stepwise_regression.R")
     try:
         result = subprocess.run(
@@ -50,7 +50,7 @@ def run_r_analysis():
         print(e.stderr)
 
 def run_m_pmi2html():
-    """Run the m_pmi2html.py script."""
+    """Run m_pmi2html.py script."""
     SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "scrap_data", "m_pmi2html.py")
     try:
         result = subprocess.run(
@@ -66,7 +66,7 @@ def run_m_pmi2html():
         print(e.stderr)
 
 def run_s_pmi2html():
-    """Run the s_pmi2html.py script."""
+    """Run s_pmi2html.py script."""
     SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "scrap_data", "s_pmi2html.py")
     try:
         result = subprocess.run(
@@ -82,7 +82,7 @@ def run_s_pmi2html():
         print(e.stderr)
 
 def run_cpi2html():
-    """Run cpi2csv script."""
+    """Run cpi2html script."""
     SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "scrap_data", "cpi2html.py")
     try:
         result = subprocess.run(
@@ -146,7 +146,7 @@ def run_leadingidx2html():
         print(e.stderr)
 
 def run_unemployment():
-    """Run the unemployment.py script."""
+    """Run unemployment.py script."""
     SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "refine_data", "unemployment.py")
     try:
         result = subprocess.run(
@@ -162,7 +162,7 @@ def run_unemployment():
         print(e.stderr)
 
 def run_sp500():
-    """Run the sp500.py script."""
+    """Run sp500.py script."""
     SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "refine_data", "sp500.py")
     try:
         result = subprocess.run(
@@ -241,22 +241,6 @@ def run_s_pmi():
         print("Error running s_pmi.py:")
         print(e.stderr)
 
-def run_pmi2csv():
-    """Run pmi2csv.py script."""
-    SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "refine_data", "pmi2csv.py")
-    try:
-        result = subprocess.run(
-            ["python3", SCRIPT_PATH],
-            capture_output=True,
-            text=True,
-            check=True
-        )
-        print("gdp_cpi2csv.py executed successfully:")
-        print(result.stdout)
-    except subprocess.CalledProcessError as e:
-        print("Error running pmi2csv.py:")
-        print(e.stderr)
-
 def run_federal_interest_rate():
     """Run federal_interest_rate.py script."""
     SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "refine_data", "federal_interest_rate.py")
@@ -290,7 +274,7 @@ def run_leading_index():
         print(e.stderr)
 
 def run_closing_price():
-    """Run leading_index2.py script."""
+    """Placeholder for refining stock data from tickers (closing_price.py)."""
     SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "refine_data", "closing_price.py")
     try:
         result = subprocess.run(
@@ -305,50 +289,106 @@ def run_closing_price():
         print("Error running closing_price.py:")
         print(e.stderr)
 
-# Step 4: Main function
+# 4. Additional placeholders for new -stocks commands
+def run_macro():
+    """
+    Placeholder for calling macros or other scripts
+    that handle lists of stock data.
+    """
+    print("\n[INFO] Running macro data tasks...")
+    # Example: you might call stock_data macros here
+    SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "stock_data", "macro.py")
+    try:
+        result = subprocess.run(
+            ["python3", SCRIPT_PATH],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        print("macro.py executed successfully:")
+        print(result.stdout)
+    except subprocess.CalledProcessError as e:
+        print("Error running macro.py:")
+        print(e.stderr)
+    # Add any others as needed
+    print("[INFO] Macro tasks completed.\n")
+
+def run_ticker():
+    """
+    Placeholder for handling stock data by tickers.
+    Potentially calls closing_price.py or your incremental download script.
+    """
+    print("\n[INFO] Running ticker data tasks (stock scraping/refining)...")
+    # For example:
+    
+    print("[INFO] Ticker tasks completed.\n")
+
+
+# 5: Main function
 def main():
     parser = argparse.ArgumentParser(description="StockGraphPrediction Main Script")
     parser.add_argument(
         "-mode",
         type=str,
-        required=True,
+        required=False,
         choices=["scrap", "refine", "R", "bond", "plot"],
-        help="Mode to run: scarp, refine, R, bond, or plot"
+        help="Mode to run: scrap, refine, R, bond, or plot (optional)."
+    )
+    parser.add_argument(
+        "-stocks",
+        type=str,
+        required=False,
+        choices=["macro", "ticker"],
+        help="Run stock-related commands: 'macro' or 'ticker'."
     )
     args = parser.parse_args()
 
-    # Route to the correct functionality
+    # If user specified -stocks, run that logic and skip -mode
+    if args.stocks:
+        if args.stocks == "macro":
+            run_macro()
+        elif args.stocks == "ticker":
+            run_ticker()
+        return  # End here to skip the mode-based logic
+
+    # Otherwise, fall back to mode-based logic
     if args.mode == "scrap":
         print("Running data scrapping...")
-        run_ngdp2csv() # Call ngdp2csv.py
-        run_m_pmi2html()  # Call m_pmi2html.py
-        run_s_pmi2html()  # Call s_pmi2html.py
-        run_cpi2html()  # Call cpi2html.py
-        run_fomc_IRD2html()  # Call fomc_IRD2html.py
-        run_unrate2html()  # Call unrate2html.py
-        run_leadingidx2html()  #Call leadingidx2html.py
+        run_ngdp2csv()
+        run_m_pmi2html()
+        run_s_pmi2html()
+        run_cpi2html()
+        run_fomc_IRD2html()
+        run_unrate2html()
+        run_leadingidx2html()
+
     elif args.mode == "refine":
         print("Running data refining...")
-        run_unemployment()  # Call unemployment.py
+        run_unemployment()
         run_m_pmi()
         run_s_pmi()
-        run_sp500()  # Call sp500.py
-        run_cpi()  # Call cpi.py
-        run_nominal_gdp()  # Call gdp2csv.py 
-        run_leading_index()  # Call leading_index.py
-        run_federal_interest_rate()  # Call federal_interest_rate.py
-        # *closing_price from stock extracted by ticker *                
-        # run_closing_price()  # Call closing_price.py * not resolved ** Should be moved to refine
+        run_sp500()
+        run_cpi()
+        run_nominal_gdp()
+        run_leading_index()
+        run_federal_interest_rate()
+        # run_closing_price()  # Uncomment if you want to refine stock data in this mode
+
     elif args.mode == "R":
         print("Running R analysis...")
         run_r_analysis()
+
     elif args.mode == "bond":
         print("Running bond analysis...")
         # Placeholder for bond analysis functionality
+
     elif args.mode == "plot":
         print("Running plot")
+        # Placeholder for plotting
+
     else:
-        print("Invalid mode. Use -h for help.")
+        parser.print_help()
+
 
 if __name__ == "__main__":
     main()
