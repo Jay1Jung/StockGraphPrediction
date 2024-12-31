@@ -1,42 +1,71 @@
 import pandas as pd
+import os
 
-# File paths
-cpi_file = '/Users/jayjung/Desktop/dataset/CPI_expanded.csv'
-dff_file = '/Users/jayjung/Desktop/dataset/DFF_transformed.csv'
-gdp_file = '/Users/jayjung/Desktop/dataset/GDP_expanded.csv'
-leading_index_file = '/Users/jayjung/Desktop/dataset/LeadingIndex_expanded.csv'
-manufacturing_pmi_file = '/Users/jayjung/Desktop/dataset/manufacturing_pmi_transformed.csv'
-services_pmi_file = '/Users/jayjung/Desktop/dataset/services_pmi_transformed.csv'
-unemployment_rate_file = '/Users/jayjung/Desktop/dataset/UnemploymentRate_expanded.csv'
-snp_file = "/Users/jayjung/Desktop/dataset/processed_sp500_data.csv"
+def load_and_merge_datasets(base_dir):
+    """Load and merge datasets from the specified directory."""
+    # File names relative to the base directory
+    files = {
+        "cpi_file": "CPI_expanded.csv",
+        "dff_file": "DFF_transformed.csv",
+        "gdp_file": "GDP_expanded.csv",
+        "leading_index_file": "LeadingIndex_expanded.csv",
+        "manufacturing_pmi_file": "manufacturing_pmi.csv",
+        "services_pmi_file": "services_pmi.csv",
+        "unemployment_rate_file": "UnemploymentRate.csv",
+        "snp_file": "sp500_data.csv"
+    }
 
-# Load all datasets
-cpi_data = pd.read_csv(cpi_file)
-dff_data = pd.read_csv(dff_file)
-gdp_data = pd.read_csv(gdp_file)
-leading_index_data = pd.read_csv(leading_index_file)
-manufacturing_pmi_data = pd.read_csv(manufacturing_pmi_file)
-services_pmi_data = pd.read_csv(services_pmi_file)
-unemployment_rate_data = pd.read_csv(unemployment_rate_file)
-snp_closing_price = pd.read_csv(snp_file)
+    # Load datasets
+    datasets = {}
+    for name, file in files.items():
+        file_path = os.path.join(base_dir, file)
+        if os.path.exists(file_path):
+            datasets[name] = pd.read_csv(file_path)
+        else:
+            print(f"Warning: {file} not found at {file_path}. Skipping...")
+            datasets[name] = pd.DataFrame()  # Placeholder for missing data
 
-# Merge datasets on Year, Month, Day
-merged_data = cpi_data
+    # Merge datasets on Year, Month, Day
+    merged_data = datasets["cpi_file"]
 
-for data in [dff_data, gdp_data, leading_index_data, manufacturing_pmi_data, services_pmi_data, unemployment_rate_data, snp_closing_price]:
-    merged_data = pd.merge(merged_data, data, on=['Year', 'Month', 'Day'], how='outer')
+    for key, data in datasets.items():
+        if not data.empty:
+            merged_data = pd.merge(merged_data, data, on=['Year', 'Month', 'Day'], how='outer')
 
-merged_data.rename(columns={
-    'CPI_x': 'CPI',
-    'DFF': 'DfF',
-    'CPI_y' : "GDP", 
-    'Actual_x': 'Manufacturing_PMI',
-    'Actual_y': 'Services_PMI',
-    'Unemployment_rate': 'Unemployment_Rate'
-}, inplace=True)
+    # Rename columns
+    merged_data.rename(columns={
+        'CPI_x': 'CPI',
+        'DFF': 'DfF',
+        'CPI_y': 'GDP',
+        'Actual_x': 'Manufacturing_PMI',
+        'Actual_y': 'Services_PMI',
+        'Unemployment_rate': 'Unemployment_Rate'
+    }, inplace=True, errors="ignore")  # Avoid errors if columns don't exist
 
-# Save the merged dataset to a CSV file
-output_path = '/Users/jayjung/Desktop/dataset/merged_data.csv'
-merged_data.to_csv(output_path, index=False)
+    # Handle missing values (optional)
+    merged_data.fillna(method='ffill', inplace=True)  # Forward fill missing values
 
-print("All datasets have been merged and saved to", output_path)
+    return merged_data
+
+
+def main():
+    # Prompt the user to specify the data directory
+    base_dir = input("Enter the base directory for datasets (default is './data/raw'): ").strip()
+    if not base_dir:
+        base_dir = './data/raw'
+
+    if not os.path.exists(base_dir):
+        print(f"Error: The specified directory '{base_dir}' does not exist.")
+        return
+
+    try:
+        merged_data = load_and_merge_datasets(base_dir)
+        output_path = os.path.join(base_dir, 'merged_data.csv')
+        merged_data.to_csv(output_path, index=False)
+        print(f"All datasets have been merged and saved to {output_path}")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+
+if __name__ == "__main__":
+    main()

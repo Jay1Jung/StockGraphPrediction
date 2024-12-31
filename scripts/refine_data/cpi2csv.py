@@ -44,21 +44,13 @@ output_file = input("Enter the path to save the output CSV file: ")
 
 # Ensure the directory exists
 output_dir = os.path.dirname(output_file)
-os.makedirs(output_dir, exist_ok=True)
-
-# Automatically create the output file if it doesn't exist
-if not os.path.exists(output_file):
-    print(f"The file {output_file} does not exist. Creating a new file...")
-    with open(output_file, 'w', newline='', encoding='utf-8') as file:
-        writer = csv.writer(file)
-        writer.writerow(['Year', 'Month', 'Day', 'Actual'])  # Write the header
-        # Optionally add a placeholder row if needed:
-        # writer.writerow(['Placeholder_Year', 'Placeholder_Month', 'Placeholder_Day', 'Placeholder_Actual'])
+if not os.path.exists(output_dir):
+    os.makedirs(output_dir)
 
 # Save data to the specified CSV file
-with open(output_file, 'a', newline='', encoding='utf-8') as file:
+with open(output_file, 'w', newline='', encoding='utf-8') as file:
     writer = csv.writer(file)
-    # Only append data if not a placeholder
+    writer.writerow(['Year', 'Month', 'Day', 'Actual'])  # Write the header
     writer.writerows(csv_data)  # Write the data
 
 print(f"Data has been written to {output_file}")
