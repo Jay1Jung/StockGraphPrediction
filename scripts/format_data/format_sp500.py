@@ -23,16 +23,14 @@ data['Date'] = pd.to_datetime(
     errors='coerce'
 )
 
-# Step 5: Extract Year, Month, and Day
-data['Year'] = data['Date'].dt.year
-data['Month'] = data['Date'].dt.month
-data['Day'] = data['Date'].dt.day
+# Step 5: Format 'Date' to "YYYY-MM-DD"
+data['Date'] = data['Date'].dt.strftime('%Y-%m-%d')
 
 # Step 6: Rename 'Close' column to 'Closing price'
 data = data.rename(columns={'Close': 'Closing price'})
 
 # Step 7: Select necessary columns
-processed_data = data[['Year', 'Month', 'Day', 'Closing price']]
+processed_data = data[['Date', 'Closing price']]
 
 # Step 8: Save the processed data to a CSV file
 processed_data.to_csv(output_file_path, index=False)
