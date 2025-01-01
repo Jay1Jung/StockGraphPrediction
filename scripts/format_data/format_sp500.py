@@ -3,8 +3,8 @@ import pandas as pd
 
 # Step 1: Set up project directory paths dynamically
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
-RAW_DATA_DIR = os.path.join(PROJECT_ROOT, "data", "raw")
-PROCESSED_DATA_DIR = os.path.join(PROJECT_ROOT, "data", "processed")
+RAW_DATA_DIR = os.path.join(PROJECT_ROOT, "data", "processed")
+PROCESSED_DATA_DIR = os.path.join(PROJECT_ROOT, "data", "formatted")
 
 # Ensure directories exist
 os.makedirs(RAW_DATA_DIR, exist_ok=True)
