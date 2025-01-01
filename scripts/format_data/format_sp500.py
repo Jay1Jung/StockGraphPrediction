@@ -23,16 +23,19 @@ data['Date'] = pd.to_datetime(
     errors='coerce'
 )
 
-# Step 5: Format 'Date' to "YYYY-MM-DD"
+# Step 5: Filter data for dates from 2020 onwards
+data = data[data['Date'] >= '2020-01-01']
+
+# Step 6: Format 'Date' to "YYYY-MM-DD"
 data['Date'] = data['Date'].dt.strftime('%Y-%m-%d')
 
-# Step 6: Rename 'Close' column to 'Closing price'
+# Step 7: Rename 'Close' column to 'Closing price'
 data = data.rename(columns={'Close': 'Closing price'})
 
-# Step 7: Select necessary columns
+# Step 8: Select necessary columns
 processed_data = data[['Date', 'Closing price']]
 
-# Step 8: Save the processed data to a CSV file
+# Step 9: Save the processed data to a CSV file
 processed_data.to_csv(output_file_path, index=False)
 
 print(f"Data processed and saved as {output_file_path}")

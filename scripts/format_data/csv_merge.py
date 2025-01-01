@@ -1,42 +1,50 @@
+import os
 import pandas as pd
 
-# File paths
-cpi_file = '/Users/jayjung/Desktop/dataset/`CPI_expanded.csv`'
-dff_file = '/Users/jayjung/Desktop/dataset/DFF_transformed.csv'
-gdp_file = '/Users/jayjung/Desktop/dataset/GDP_expanded.csv'
-leading_index_file = '/Users/jayjung/Desktop/dataset/LeadingIndex_expanded.csv'
-manufacturing_pmi_file = '/Users/jayjung/Desktop/dataset/manufacturing_pmi_transformed.csv'
-services_pmi_file = '/Users/jayjung/Desktop/dataset/services_pmi_transformed.csv'
-unemployment_rate_file = '/Users/jayjung/Desktop/dataset/UnemploymentRate_expanded.csv'
-snp_file = "/Users/jayjung/Desktop/dataset/processed_sp500_data.csv"
+# Step 1: Set up project directory paths dynamically
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
+RAW_DATA_DIR = os.path.join(PROJECT_ROOT, "data", "formatted")
+PROCESSED_DATA_DIR = os.path.join(PROJECT_ROOT, "data", "formatted")
 
-# Load all datasets
-cpi_data = pd.read_csv(cpi_file)
-dff_data = pd.read_csv(dff_file)
-gdp_data = pd.read_csv(gdp_file)
-leading_index_data = pd.read_csv(leading_index_file)
-manufacturing_pmi_data = pd.read_csv(manufacturing_pmi_file)
-services_pmi_data = pd.read_csv(services_pmi_file)
-unemployment_rate_data = pd.read_csv(unemployment_rate_file)
-snp_closing_price = pd.read_csv(snp_file)
+# Ensure directories exist
+os.makedirs(RAW_DATA_DIR, exist_ok=True)
+os.makedirs(PROCESSED_DATA_DIR, exist_ok=True)
 
-# Merge datasets on Year, Month, Day
-merged_data = cpi_data
+# Step 2: File paths for all uploaded files
+file_paths = [
+    os.path.join(RAW_DATA_DIR, "formatted_cpi_data.csv"),
+    os.path.join(RAW_DATA_DIR, "formatted_UnemploymentRate.csv"),
+    os.path.join(RAW_DATA_DIR, "formatted_us_leading_index.csv"),
+    os.path.join(RAW_DATA_DIR, "formatted_us_nominal_GDP.csv"),
+    os.path.join(RAW_DATA_DIR, "merged_pmi_data.csv"),
+    os.path.join(RAW_DATA_DIR, "merged_stock_data.csv"),
+    os.path.join(RAW_DATA_DIR, "processed_sp500_data.csv")
+]
 
-for data in [dff_data, gdp_data, leading_index_data, manufacturing_pmi_data, services_pmi_data, unemployment_rate_data, snp_closing_price]:
-    merged_data = pd.merge(merged_data, data, on=['Year', 'Month', 'Day'], how='outer')
+# Step 3: Load and merge all CSV files
+final_data = None
 
-merged_data.rename(columns={
-    'CPI_x': 'CPI',
-    'DFF': 'DfF',
-    'CPI_y' : "GDP", 
-    'Actual_x': 'Manufacturing_PMI',
-    'Actual_y': 'Services_PMI',
-    'Unemployment_rate': 'Unemployment_Rate'
-}, inplace=True)
+for file_path in file_paths:
+    temp_data = pd.read_csv(file_path)
+    temp_data['Date'] = pd.to_datetime(temp_data['Date'], errors='coerce')
+    if final_data is None:
+        final_data = temp_data
+    else:
+        final_data = pd.merge(final_data, temp_data, on='Date', how='outer')
 
-# Save the merged dataset to a CSV file
-output_path = '/Users/jayjung/Desktop/dataset/merged_data.csv'
-merged_data.to_csv(output_path, index=False)
+# Step 4: Rename columns for clarity
+final_data = final_data.rename(columns={
+    'Actual_x': 'CPI',
+    'Actual_y': 'Unemployment Rate',
+    'LeadingIndex' : 'Leading_index',
+    'Closing price' : 's&p 500 closing_price'
+})
 
-print("All datasets have been merged and saved to", output_path)
+# Step 5: Sort the merged data by Date
+final_data = final_data.sort_values(by='Date')
+
+# Step 6: Save the merged data to a CSV file
+output_file_path = os.path.join(PROCESSED_DATA_DIR, "merged_all_data.csv")
+final_data.to_csv(output_file_path, index=False)
+
+print(f"All data merged and saved as {output_file_path}")
