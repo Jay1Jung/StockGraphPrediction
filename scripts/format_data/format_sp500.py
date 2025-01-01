@@ -11,7 +11,7 @@ os.makedirs(RAW_DATA_DIR, exist_ok=True)
 os.makedirs(PROCESSED_DATA_DIR, exist_ok=True)
 
 # Step 2: File paths
-input_file_path = os.path.join(RAW_DATA_DIR, "sp500_data.csv")
+input_file_path = os.path.join(RAW_DATA_DIR, "sp500.csv")
 output_file_path = os.path.join(PROCESSED_DATA_DIR, "processed_sp500_data.csv")
 
 # Step 3: Load the CSV file
