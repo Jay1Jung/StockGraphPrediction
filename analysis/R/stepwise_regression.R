@@ -34,7 +34,6 @@ if(!file.exists(csv_path)){
 print("Starting R script execution")
 
 # Read the CSV file
-# Using read.csv from base R; alternatively, you can use readr::read_csv for faster reading
 priceindic <- read.csv(csv_path, stringsAsFactors = FALSE)
 
 # Print the number of rows in the dataset
@@ -123,8 +122,8 @@ print(description)
 # Perform Correlation Test
 # Exclude columns that are entirely NA to prevent errors
 corr_columns <- c("Closing.price", "CPI", "GDP", "LeadingIndex", "Unemployment.Rate")
-available_corr_columns <- corr_columns[colnames(priceindicf) %in% corr_columns & 
-                                       sapply(priceindicf[, corr_columns], function(x) !all(is.na(x)))]
+available_corr_columns <- intersect(corr_columns, colnames(priceindicf))
+available_corr_columns <- available_corr_columns[sapply(priceindicf[, available_corr_columns], function(x) !all(is.na(x)))]
 
 # Print available_corr_columns for debugging
 print("Available correlation columns:")
@@ -133,16 +132,32 @@ print(available_corr_columns)
 if(length(available_corr_columns) < 2){
   print("Not enough columns available for correlation analysis.")
 } else {
-  corr_results <- corr.test(priceindicf[, available_corr_columns], adjust = "none")
-  print("---- Correlation Test Results ----")
-  print(corr_results)
+  # Ensure all selected columns are present in the data frame
+  missing_in_subset <- setdiff(available_corr_columns, colnames(priceindicf))
+  if(length(missing_in_subset) > 0){
+    print(paste("These columns are missing in the subset:", paste(missing_in_subset, collapse = ", ")))
+    # Remove missing columns from available_corr_columns
+    available_corr_columns <- setdiff(available_corr_columns, missing_in_subset)
+    print("Updated available correlation columns:")
+    print(available_corr_columns)
+  }
+  
+  # Re-check the number of available columns
+  if(length(available_corr_columns) < 2){
+    print("Not enough columns available for correlation analysis after removing missing columns.")
+  } else {
+    # Perform the correlation test
+    corr_results <- corr.test(priceindicf[, available_corr_columns], adjust = "none")
+    print("---- Correlation Test Results ----")
+    print(corr_results)
+  }
 }
 
 # Build the Linear Model
 # Ensure that all predictor variables are present and not entirely NA
 predictors <- c("CPI", "GDP", "LeadingIndex", "Unemployment.Rate", "Interest_rate")
-available_predictors <- predictors[predictors %in% colnames(priceindicf) & 
-                                   sapply(priceindicf[, predictors], function(x) !all(is.na(x)))]
+available_predictors <- intersect(predictors, colnames(priceindicf))
+available_predictors <- available_predictors[sapply(priceindicf[, available_predictors], function(x) !all(is.na(x)))]
 
 if(length(available_predictors) == 0){
   stop("No predictor variables available for linear modeling.")
