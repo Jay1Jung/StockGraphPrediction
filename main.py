@@ -35,19 +35,23 @@ def run_ngdp2csv():
 
 def run_r_analysis():
     """Run R script for stepwise regression."""
-    R_SCRIPT_PATH = os.path.join(PROJECT_ROOT, "analysis", "R", "stepwise_regression.R")
+    rscript_executable = "/usr/local/bin/Rscript"  
+    r_script_path = "/Users/dohhyungjun/Documents/StockGraphPrediction/analysis.R"  # Update with your R script path
     try:
         result = subprocess.run(
-            ["Rscript", R_SCRIPT_PATH],
-            capture_output=True,
-            text=True,
-            check=True
+            [rscript_executable, r_script_path],
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
         )
-        print("R analysis completed successfully:")
-        print(result.stdout)
+        print("R script executed successfully.")
+        print("Output:\n", result.stdout)
     except subprocess.CalledProcessError as e:
-        print("Error during R analysis:")
-        print(e.stderr)
+        print("An error occurred while running the R script.")
+        print("Error Output:\n", e.stderr)
+    except FileNotFoundError:
+        print(f"Rscript not found at {rscript_executable}. Please verify the path.")
 
 def run_m_pmi2html():
     """Run m_pmi2html.py script."""
