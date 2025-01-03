@@ -24,7 +24,7 @@ sapply(required_packages, require, character.only = TRUE)
 print("---- All required packages are installed and loaded successfully ----")
 
 # Define the path to the CSV file
-csv_path <- "/Users/dohhyungjun/Downloads/merged_all_data.csv"
+csv_path <- "/Users/dohhyungjun/Downloads//merged_all_data.csv"
 
 # Check if the CSV file exists
 if(!file.exists(csv_path)){
@@ -34,157 +34,208 @@ if(!file.exists(csv_path)){
 print("Starting R script execution")
 
 # Read the CSV file
-priceindic <- read.csv(csv_path, stringsAsFactors = FALSE)
+initdata <- read.csv(csv_path, stringsAsFactors = FALSE)
 
 # Print the number of rows in the dataset
-print(paste("Total rows in priceindic:", nrow(priceindic)))
+print(paste("Total rows in initdata:", nrow(initdata)))
 
 # Display the column names
 print("---- Column Names in Data Frame ----")
-print(colnames(priceindic))
-
-# Define the required columns for analysis
-required_columns <- c("Closing.price", "CPI", "GDP", "LeadingIndex", "Unemployment.Rate", "Interest_rate")
-
-# Function to suggest possible correct column names based on similarity
-suggest_corrections <- function(missing_cols, available_cols) {
-  for(missing in missing_cols){
-    # Calculate string distances using Jaro-Winkler distance
-    distances <- stringdist::stringdist(tolower(missing), tolower(available_cols), method = "jw")
-    # Find the closest match
-    closest <- available_cols[which.min(distances)]
-    # If the closest distance is below a threshold (e.g., 0.2), suggest it
-    if(min(distances) < 0.2){
-      print(paste0("Did you mean '", closest, "' instead of '", missing, "'?"))
-    } else {
-      print(paste0("No close match found for '", missing, "'. Please verify the column name."))
-    }
-  }
-}
-
-# Identify missing columns
-missing_columns <- setdiff(required_columns, colnames(priceindic))
-
-if(length(missing_columns) > 0){
-  print(paste("Missing required columns:", paste(missing_columns, collapse = ", ")))
-  # Suggest possible corrections
-  suggest_corrections(missing_columns, colnames(priceindic))
-  
-  # Optionally, stop execution if critical columns are missing
-  # Uncomment the line below to halt the script if columns are missing
-  # stop("Please correct the column names in the CSV file and rerun the script.")
-  
-  # Alternatively, proceed by adding missing columns with NA
-  for(col in missing_columns){
-    priceindic[[col]] <- NA
-    print(paste("Added missing column with NA:", col))
-  }
-} else {
-  print("All required columns are present.")
-}
+print(colnames(initdata))
 
 # Subset the data
-subset_start <- 1    # Adjusted to start from 1 instead of 0
-subset_end <- 1712
+subset_start <- 1
+subset_end <- 1461
 
 # Validate subset range
-if(nrow(priceindic) < subset_end){
-  stop(paste("Data has only", nrow(priceindic), "rows. Cannot subset up to row", subset_end))
+if(nrow(initdata) < subset_end){
+  stop(paste("Data has only", nrow(initdata), "rows. Cannot subset up to row", subset_end))
 }
 
 # Subset the data
-priceindicf <- priceindic[subset_start:subset_end, ]
+initdataf <- initdata[subset_start:subset_end, ]
 
-# Print the number of rows in the subset
-print(paste("Total rows in priceindicf:", nrow(priceindicf)))
-
-# Optionally, display the first few rows of the subset to verify (optional)
-# head(priceindicf)
-
-# Data Type Validation
-numeric_columns <- c("Closing.price", "CPI", "GDP", "LeadingIndex", "Unemployment.Rate", "Interest_rate")
-
-for(col in numeric_columns){
-  if(!is.numeric(priceindicf[[col]])){
-    print(paste("Converting column", col, "to numeric."))
-    priceindicf[[col]] <- as.numeric(priceindicf[[col]])
-    if(any(is.na(priceindicf[[col]]))){
-      print(paste("Warning: NAs introduced by coercion in column", col))
-    }
-  }
-}
-
-# Describe the Closing Price
-description <- describe(priceindicf$Closing.price, fast = TRUE)
-print("---- Description of Closing Price ----")
+# Describe the manufacturing_pmi_Actual
+print("---- Description of manufacturing_pmi_Actual ----")
+description <- describe(initdataf$manufacturing_pmi_Actual, fast = TRUE)
 print(description)
 
-# Perform Correlation Test
-# Exclude columns that are entirely NA to prevent errors
-corr_columns <- c("Closing.price", "CPI", "GDP", "LeadingIndex", "Unemployment.Rate")
-available_corr_columns <- intersect(corr_columns, colnames(priceindicf))
-available_corr_columns <- available_corr_columns[sapply(priceindicf[, available_corr_columns], function(x) !all(is.na(x)))]
-
-# Print available_corr_columns for debugging
-print("Available correlation columns:")
-print(available_corr_columns)
-
-if(length(available_corr_columns) < 2){
-  print("Not enough columns available for correlation analysis.")
-} else {
-  # Ensure all selected columns are present in the data frame
-  missing_in_subset <- setdiff(available_corr_columns, colnames(priceindicf))
-  if(length(missing_in_subset) > 0){
-    print(paste("These columns are missing in the subset:", paste(missing_in_subset, collapse = ", ")))
-    # Remove missing columns from available_corr_columns
-    available_corr_columns <- setdiff(available_corr_columns, missing_in_subset)
-    print("Updated available correlation columns:")
-    print(available_corr_columns)
+# Define a function to perform analysis for a given stock
+perform_stock_analysis <- function(stock_symbol, data_frame, pmi_column) {
+  stock_column <- paste0(stock_symbol, "_closing")
+  if(!stock_column %in% colnames(data_frame)) {
+    print(paste("Stock column", stock_column, "not found in data. Skipping analysis for", stock_symbol))
+    return(NULL)
   }
   
-  # Re-check the number of available columns
+  # Define predictor columns based on PMI column
+  predictor_columns <- c("CPI", "GDP", "LeadingIndex", "Unemployment.Rate", "Interest_rate")
+  if(!is.na(pmi_column)){
+    predictor_columns <- c(predictor_columns, pmi_column)
+  }
+  
+  # Ensure all predictor columns exist
+  missing_predictors <- setdiff(predictor_columns, colnames(data_frame))
+  if(length(missing_predictors) > 0) {
+    print(paste("Missing predictor columns for", stock_symbol, ":", paste(missing_predictors, collapse = ", ")))
+    return(NULL)
+  }
+  
+  # Ensure columns are numeric
+  columns_to_check <- c(stock_column, predictor_columns)
+  for(col in columns_to_check){
+    if(!is.numeric(data_frame[[col]])){
+      print(paste("Converting column", col, "to numeric."))
+      data_frame[[col]] <- as.numeric(data_frame[[col]])
+      if(any(is.na(data_frame[[col]]))){
+        print(paste("Warning: NAs introduced by coercion in column", col))
+      }
+    }
+  }
+  
+  # Perform correlation test
+  corr_columns <- c(stock_column, predictor_columns)
+  available_corr_columns <- corr_columns[sapply(data_frame[, corr_columns], function(x) !all(is.na(x)))]
+  
   if(length(available_corr_columns) < 2){
-    print("Not enough columns available for correlation analysis after removing missing columns.")
+    print(paste("Not enough columns available for correlation analysis for", stock_symbol))
   } else {
-    # Perform the correlation test
-    corr_results <- corr.test(priceindicf[, available_corr_columns], adjust = "none")
-    print("---- Correlation Test Results ----")
+    corr_results <- corr.test(data_frame[, available_corr_columns], adjust = "none")
+    print(paste("---- Correlation Test Results for", stock_symbol, "----"))
     print(corr_results)
   }
-}
-
-# Build the Linear Model
-# Ensure that all predictor variables are present and not entirely NA
-predictors <- c("CPI", "GDP", "LeadingIndex", "Unemployment.Rate", "Interest_rate")
-available_predictors <- intersect(predictors, colnames(priceindicf))
-available_predictors <- available_predictors[sapply(priceindicf[, available_predictors], function(x) !all(is.na(x)))]
-
-if(length(available_predictors) == 0){
-  stop("No predictor variables available for linear modeling.")
-}
-
-# Construct the formula dynamically
-formula_str <- paste("Closing.price ~", paste(available_predictors, collapse = " + "))
-formula <- as.formula(formula_str)
-
-# Fit the linear model
-Stock.model <- lm(formula, data = priceindicf)
-print("---- Linear Model Summary ----")
-print(summary(Stock.model))
-
-# Perform Stepwise Regression
-# Check if ols_step_both_p can be performed with available predictors
-if(length(available_predictors) >= 1){
-  step_results <- ols_step_both_p(Stock.model, pent=0.05, prem=0.10, progress=TRUE, detail=TRUE)
-  print("---- Stepwise Regression Results ----")
+  
+  # Build the linear model
+  formula_str <- paste(stock_column, "~", paste(predictor_columns, collapse = " + "))
+  formula <- as.formula(formula_str)
+  
+  stock_model <- lm(formula, data = data_frame)
+  print(paste("---- Linear Model Summary for", stock_symbol, "----"))
+  print(summary(stock_model))
+  
+  # Perform stepwise regression
+  step_results <- ols_step_both_p(stock_model, pent=0.05, prem=0.10, progress=TRUE, detail=TRUE)
+  print(paste("---- Stepwise Regression Results for", stock_symbol, "----"))
   print(step_results)
-} else {
-  print("Not enough predictors available for stepwise regression.")
+  
+  # Check VIF and Tolerance
+  vif_tol <- ols_vif_tol(stock_model)
+  print(paste("---- VIF and Tolerance for", stock_symbol, "----"))
+  print(vif_tol)
 }
 
-# Check Variance Inflation Factor (VIF) and Tolerance
-if(exists("Stock.model") && length(available_predictors) >= 1){
-  vif_tol <- ols_vif_tol(Stock.model)
-  print("---- VIF and Tolerance ----")
-  print(vif_tol)
+# Analysis for Technology Sector
+print("===== Technology Sector =====")
+tech_stocks <- list(
+  list(symbol = "NVDA", pmi_column = "manufacturing_pmi_Actual"),
+  list(symbol = "AAPL", pmi_column = "manufacturing_pmi_Actual"),
+  list(symbol = "MSFT", pmi_column = "services_pmi_Actual")
+)
+
+for(stock in tech_stocks){
+  perform_stock_analysis(stock$symbol, initdataf, stock$pmi_column)
+}
+
+# Analysis for Financial Service Sector
+print("===== Financial Service Sector =====")
+financial_stocks <- list(
+  list(symbol = "BX", pmi_column = "services_pmi_Actual"),
+  list(symbol = "V", pmi_column = "services_pmi_Actual"),
+  list(symbol = "JPM", pmi_column = "services_pmi_Actual")
+)
+
+for(stock in financial_stocks){
+  perform_stock_analysis(stock$symbol, initdataf, stock$pmi_column)
+}
+
+# Analysis for Consumer Cyclical Sector
+print("===== Consumer Cyclical Sector =====")
+consumer_cyclical_stocks <- list(
+  list(symbol = "AMZN", pmi_column = "services_pmi_Actual"),
+  list(symbol = "TSLA", pmi_column = "manufacturing_pmi_Actual"),
+  list(symbol = "SBUX", pmi_column = "services_pmi_Actual")
+)
+
+for(stock in consumer_cyclical_stocks){
+  perform_stock_analysis(stock$symbol, initdataf, stock$pmi_column)
+}
+
+# Analysis for Healthcare Sector
+print("===== Healthcare Sector =====")
+healthcare_stocks <- list(
+  list(symbol = "LLY", pmi_column = "manufacturing_pmi_Actual"),
+  list(symbol = "ABBV", pmi_column = "manufacturing_pmi_Actual"),
+  list(symbol = "UNH", pmi_column = "services_pmi_Actual")
+)
+
+for(stock in healthcare_stocks){
+  perform_stock_analysis(stock$symbol, initdataf, stock$pmi_column)
+}
+
+# Analysis for Communication Services Sector
+print("===== Communication Services Sector =====")
+communication_stocks <- list(
+  list(symbol = "GOOGL", pmi_column = "services_pmi_Actual"),
+  list(symbol = "META", pmi_column = "services_pmi_Actual"),
+  list(symbol = "NFLX", pmi_column = "services_pmi_Actual")
+)
+
+for(stock in communication_stocks){
+  perform_stock_analysis(stock$symbol, initdataf, stock$pmi_column)
+}
+
+# Analysis for Industrials Sector
+print("===== Industrials Sector =====")
+industrials_stocks <- list(
+  list(symbol = "GE", pmi_column = "manufacturing_pmi_Actual"),
+  list(symbol = "RTX", pmi_column = "manufacturing_pmi_Actual"),
+  list(symbol = "LMT", pmi_column = "manufacturing_pmi_Actual")
+)
+
+for(stock in industrials_stocks){
+  perform_stock_analysis(stock$symbol, initdataf, stock$pmi_column)
+}
+
+# Analysis for Consumer Defensive Sector
+print("===== Consumer Defensive Sector =====")
+consumer_defensive_stocks <- list(
+  list(symbol = "WMT", pmi_column = "services_pmi_Actual"),
+  list(symbol = "COST", pmi_column = "services_pmi_Actual"),
+  list(symbol = "TGT", pmi_column = "services_pmi_Actual")
+)
+
+for(stock in consumer_defensive_stocks){
+  perform_stock_analysis(stock$symbol, initdataf, stock$pmi_column)
+}
+
+# Analysis for Energy Sector
+print("===== Energy Sector =====")
+energy_stocks <- list(
+  list(symbol = "XOM", pmi_column = NA),
+  list(symbol = "CVX", pmi_column = NA)
+)
+
+for(stock in energy_stocks){
+  perform_stock_analysis(stock$symbol, initdataf, stock$pmi_column)
+}
+
+# Analysis for Basic Materials Sector
+print("===== Basic Materials Sector =====")
+basic_materials_stocks <- list(
+  list(symbol = "LIN", pmi_column = NA),
+  list(symbol = "SHW", pmi_column = NA)
+)
+
+for(stock in basic_materials_stocks){
+  perform_stock_analysis(stock$symbol, initdataf, stock$pmi_column)
+}
+
+# Analysis for Utilities Sector
+print("===== Utilities Sector =====")
+utilities_stocks <- list(
+  list(symbol = "NEE", pmi_column = "manufacturing_pmi_Actual")
+)
+
+for(stock in utilities_stocks){
+  perform_stock_analysis(stock$symbol, initdataf, stock$pmi_column)
 }
