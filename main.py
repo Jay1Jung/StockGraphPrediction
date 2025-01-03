@@ -35,11 +35,11 @@ def run_ngdp2csv():
 
 def run_r_analysis():
     """Run R script for stepwise regression."""
-    rscript_executable = "/usr/local/bin/Rscript"  
-    r_script_path = "/Users/dohhyungjun/Documents/StockGraphPrediction/analysis.R"  # Update with your R script path
+    rscript_executable = "/usr/local/bin/Rscript"
+    SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "analysis","R", "stepwise_regression.R")  
     try:
         result = subprocess.run(
-            [rscript_executable, r_script_path],
+            [rscript_executable, SCRIPT_PATH],
             check=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
@@ -308,6 +308,156 @@ def run_sp500_tickers2txt():
         print("Error running sp500_tickers2txt.py:")
         print(e.stderr)
 
+def run_format_cpi():
+    SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "format_data", "format_cpi.py")
+    try:
+        result = subprocess.run(
+            ["python3", SCRIPT_PATH],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        print("format_cpi.py executed successfully:")
+        print(result.stdout)
+    except subprocess.CalledProcessError as e:
+        print("Error running format_cpi.py:")
+        print(e.stderr)
+
+def run_format_gdp():
+    SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "format_data", "format_gdp.py")
+    try:
+        result = subprocess.run(
+            ["python3", SCRIPT_PATH],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        print("format_gdp.py executed successfully:")
+        print(result.stdout)
+    except subprocess.CalledProcessError as e:
+        print("Error running format_gdp.py:")
+        print(e.stderr)
+
+def run_format_leading_index():
+    SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "format_data", "format_leading_index.py")
+    try:
+        result = subprocess.run(
+            ["python3", SCRIPT_PATH],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        print("format_leading_index.py executed successfully:")
+        print(result.stdout)
+    except subprocess.CalledProcessError as e:
+        print("Error running format_leading_index.py:")
+        print(e.stderr)
+
+def run_format_interest_rate():
+    SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "format_data", "format_interest_rate.py")
+    try:
+        result = subprocess.run(
+            ["python3", SCRIPT_PATH],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        print("format_interest_rate.py executed successfully:")
+        print(result.stdout)
+    except subprocess.CalledProcessError as e:
+        print("Error running format_interest_rate.py:")
+        print(e.stderr)
+
+def run_format_merged_pmi():
+    SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "format_data", "format_merged_pmi.py")
+    try:
+        result = subprocess.run(
+            ["python3", SCRIPT_PATH],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        print("format_merged_pmi.py executed successfully:")
+        print(result.stdout)
+    except subprocess.CalledProcessError as e:
+        print("Error running format_merged_pmi.py:")
+        print(e.stderr)
+
+def run_format_sp500():
+    SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "format_data", "format_sp500.py")
+    try:
+        result = subprocess.run(
+            ["python3", SCRIPT_PATH],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        print("format_sp500.py executed successfully:")
+        print(result.stdout)
+    except subprocess.CalledProcessError as e:
+        print("Error running format_sp500.py:")
+        print(e.stderr)
+
+def run_format_stock():
+    SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "format_data", "format_stock.py")
+    try:
+        result = subprocess.run(
+            ["python3", SCRIPT_PATH],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        print("format_stock.py executed successfully:")
+        print(result.stdout)
+    except subprocess.CalledProcessError as e:
+        print("Error running format_stock.py:")
+        print(e.stderr)
+
+def run_format_unemployment():
+    SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "format_data", "format_unemployment.py")
+    try:
+        result = subprocess.run(
+            ["python3", SCRIPT_PATH],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        print("format_unemployment.py executed successfully:")
+        print(result.stdout)
+    except subprocess.CalledProcessError as e:
+        print("Error running format_unemployment.py:")
+        print(e.stderr)
+
+def run_format_interest_rate():
+    SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "format_data", "format_interest_rate.py")
+    try:
+        result = subprocess.run(
+            ["python3", SCRIPT_PATH],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        print("format_interest_rate.py executed successfully:")
+        print(result.stdout)
+    except subprocess.CalledProcessError as e:
+        print("Error running format_interest_rate.py:")
+        print(e.stderr)
+
+def run_format_csv_merge():
+    SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "format_data", "format_csv_merge.py")
+    try:
+        result = subprocess.run(
+            ["python3", SCRIPT_PATH],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        print("format_csv_merge.py executed successfully:")
+        print(result.stdout)
+    except subprocess.CalledProcessError as e:
+        print("Error running format_csv_merge.py:")
+        print(e.stderr)
+
 # 4. Additional placeholders for new -stocks commands
 def run_macro():
     """
@@ -332,30 +482,6 @@ def run_macro():
     # Add any others as needed
     print("[INFO] Macro tasks completed.\n")
 
-def run_format():
-    """
-    Placeholder for handling stock data by tickers.
-    Potentially calls closing_price.py or your incremental download script.
-    """
-    print("\n[INFO] Running ticker data tasks (stock scraping/refining)...")
-    # For example:
-    SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "stock_data", "format.py")
-    try:
-        result = subprocess.run(
-            ["python3", SCRIPT_PATH],
-            capture_output=True,
-            text=True,
-            check=True
-        )
-        print("format.py executed successfully:")
-        print(result.stdout)
-    except subprocess.CalledProcessError as e:
-        print("Error running format.py:")
-        print(e.stderr)
-    # Add any others as needed
-    print("[INFO] Format tasks completed.\n")
-
-
 # 5: Main function
 def main():
     parser = argparse.ArgumentParser(description="StockGraphPrediction Main Script")
@@ -363,8 +489,8 @@ def main():
         "-mode",
         type=str,
         required=False,
-        choices=["scrap", "refine", "R", "plot"],
-        help="Mode to run: scrap, refine, R, bond, or plot (optional)."
+        choices=["scrap", "refine", "R", "format", "plot"],
+        help="Mode to run: scrap, refine, R, format, or plot (optional)."
     )
     parser.add_argument(
         "-stocks",
@@ -376,13 +502,6 @@ def main():
     args = parser.parse_args()
 
     # If user specified -stocks, run that logic and skip -mode
-    if args.stocks:
-        if args.stocks == "macro":
-            run_macro()
-        elif args.stocks == "format":
-            run_format()
-        return  # End here to skip the mode-based logic
-
     # Otherwise, fall back to mode-based logic
     if args.mode == "scrap":
         print("Running data scrapping...")
@@ -408,6 +527,18 @@ def main():
         run_leading_index()
         run_federal_interest_rate()
         # run_closing_price()  # Uncomment if you want to refine stock data in this mode
+
+    elif args.mode == "format":
+        print("Running data formatting")
+        run_format_cpi()
+        run_format_gdp()
+        run_format_leading_index()
+        run_format_merged_pmi()
+        run_format_sp500()
+        run_format_stock()
+        run_format_unemployment()
+        run_format_interest_rate()
+        run_format_csv_merge()
 
     elif args.mode == "R":
         print("Running R analysis...")

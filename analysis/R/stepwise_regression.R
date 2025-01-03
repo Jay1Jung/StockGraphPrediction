@@ -23,8 +23,27 @@ sapply(required_packages, require, character.only = TRUE)
 
 print("---- All required packages are installed and loaded successfully ----")
 
-# Define the path to the CSV file
-csv_path <- "/Users/dohhyungjun/Downloads//merged_all_data.csv"
+# Dynamically determine the script's directory
+get_script_path <- function() {
+  cmdArgs <- commandArgs(trailingOnly = FALSE)
+  needle <- "--file="
+  match <- grep(needle, cmdArgs)
+  if (length(match) > 0) {
+    # Rscript
+    return(normalizePath(sub(needle, "", cmdArgs[match])))
+  } else {
+    # 'source'd via R console
+    return(normalizePath(sys.frames()[[1]]$ofile))
+  }
+}
+
+script_path <- get_script_path()
+script_dir <- dirname(script_path)
+
+# Define the path to the CSV file relative to the script's directory
+csv_path <- file.path(script_dir, "../../", "data", "formatted", "merged_all_data.csv")
+
+print(paste("CSV path set to:", csv_path))
 
 # Check if the CSV file exists
 if(!file.exists(csv_path)){
@@ -60,6 +79,34 @@ print("---- Description of manufacturing_pmi_Actual ----")
 description <- describe(initdataf$manufacturing_pmi_Actual, fast = TRUE)
 print(description)
 
+# ---------------------- #
+# **Added Helper Function**
+# ---------------------- #
+
+# Helper function to suggest possible column name corrections and optionally rename them
+suggest_and_rename_columns <- function(missing_cols, available_cols, data_frame, threshold = 0.2){
+  for(missing in missing_cols){
+    # Compute string distances using Jaro-Winkler method
+    distances <- stringdist::stringdist(tolower(missing), tolower(available_cols), method = "jw")
+    
+    # Find the closest match
+    closest <- available_cols[which.min(distances)]
+    closest_distance <- min(distances)
+    
+    # If the closest distance is below a threshold (e.g., 0.2), suggest it
+    if(closest_distance < threshold){
+      print(paste0("Found a close match for '", missing, "': '", closest, "'. Renaming it to '", missing, "'."))
+      # Rename the column in the data frame
+      names(data_frame)[names(data_frame) == closest] <- missing
+      # Update the available_cols vector
+      available_cols[available_cols == closest] <- missing
+    } else {
+      print(paste0("No close match found for '", missing, "'. Please verify the column name."))
+    }
+  }
+  return(data_frame)
+}
+
 # Define a function to perform analysis for a given stock
 perform_stock_analysis <- function(stock_symbol, data_frame, pmi_column) {
   stock_column <- paste0(stock_symbol, "_closing")
@@ -78,7 +125,16 @@ perform_stock_analysis <- function(stock_symbol, data_frame, pmi_column) {
   missing_predictors <- setdiff(predictor_columns, colnames(data_frame))
   if(length(missing_predictors) > 0) {
     print(paste("Missing predictor columns for", stock_symbol, ":", paste(missing_predictors, collapse = ", ")))
-    return(NULL)
+    
+    # Call the suggestion and renaming function
+    data_frame <- suggest_and_rename_columns(missing_predictors, colnames(data_frame), data_frame)
+    
+    # Re-check if columns are now present after renaming
+    missing_predictors <- setdiff(predictor_columns, colnames(data_frame))
+    if(length(missing_predictors) > 0){
+      print(paste("Still missing predictor columns for", stock_symbol, ":", paste(missing_predictors, collapse = ", ")))
+      return(NULL)  # Skip analysis for this stock
+    }
   }
   
   # Ensure columns are numeric
