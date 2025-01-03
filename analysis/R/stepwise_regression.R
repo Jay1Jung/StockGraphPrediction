@@ -409,7 +409,6 @@ get_formatted_data <- function(){
   
   # Parallel Processing
   formatted_data <- get_formatted_data_parallel()
-  
   return(formatted_data)
 }
 
