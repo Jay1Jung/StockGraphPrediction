@@ -36,7 +36,7 @@ def run_ngdp2csv():
 def run_r_analysis():
     """Run R script for stepwise regression."""
     rscript_executable = "/usr/local/bin/Rscript"
-    SCRIPT_PATH = os.path.join(PROJECT_ROOT, "scripts", "analysis","R", "stepwise_regression.R")  
+    SCRIPT_PATH = os.path.join(PROJECT_ROOT, "analysis","R", "stepwise_regression.R")  
     try:
         result = subprocess.run(
             [rscript_executable, SCRIPT_PATH],

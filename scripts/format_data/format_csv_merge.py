@@ -40,7 +40,8 @@ final_data = final_data.rename(columns={
 })
 
 # Step 5: Fill missing values with the previous row's data
-final_data.fillna(method='ffill').fillna(method='bfill', inplace=True)
+final_data.fillna(method='ffill', inplace=True)
+
 
 # Step 6: Sort the merged data by Date
 final_data = final_data.sort_values(by='Date')
