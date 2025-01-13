@@ -1,0 +1,93 @@
+<!DOCTYPE html> 
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title> Stock Graph Prediction </title>
+		<link rel="stylesheet" href="webpage.css">
+		<script src="script.js"></script>
+	</head>
+    <body>
+        <div class="container">
+            <div class="left">
+                <div class="lefttop">
+                    <span class="related-news">Related Indicator Graph</span>
+                    <div class = "circle-menu">
+                            <div class="menu-item" style="--angle: 0deg;">
+                            <a href="https://fred.stlouisfed.org/series/CPIAUCSL" class="news-link">CPI</a> 
+                            </div>
+                            <div class="menu-item" style="--angle: 45deg;">
+                            <a href="https://fred.stlouisfed.org/series/CPIAUCSL" class="news-link">GDP</a>
+                            </div>
+                            <div class="menu-item" style="--angle: 90deg;">
+                            <a href="https://fred.stlouisfed.org/series/CPIAUCSL" class="news-link">Leading Index</a>
+                            </div>
+                            <div class="menu-item" style="--angle: 135deg;">
+                            <a href="https://fred.stlouisfed.org/series/CPIAUCSL" class="news-link">Interest Rate</a>
+                            </div>
+                            <div class="menu-item" style="--angle: 180deg;">
+                            <a href="https://fred.stlouisfed.org/series/CPIAUCSL" class="news-link">Unemployment Rate</a>
+                            </div>
+                            <div class="menu-item" style="--angle: 225deg;">
+                            <a href="https://fred.stlouisfed.org/series/CPIAUCSL" class="news-link">Service PMI</a>
+                            </div>
+                            <div class="menu-item" style="--angle: 270deg;">
+                            <a href="https://fred.stlouisfed.org/series/CPIAUCSL" class="news-link">Manufacturing PMI</a>
+                            </div>
+
+                    </div>
+                </div>
+                <div class="leftmiddle">
+                    <div class="chart-container">
+
+                        <h1 class="chart-title">Sector Performance</h1>
+                      
+                        <!-- 도넛 차트 -->
+                        <div class ="donut-section">
+                            <div class="donut-chart">
+                                <div class="center-text">
+                                    <span>All Sectors</span>
+                                    <span>0.55%</span>
+                                </div>
+                            </div>
+                        </div>
+                      
+                        <!-- 범례 텍스트 -->
+                        <div class="legend">
+                            <div class="legend-section">
+                                <ul>
+                                    <li>Communication Services <span class="positive" data-value="2.13" >+2.13%</span></li>
+                                    <li >Information Technology <span class="positive" data-value="1.44">+1.44%</span></li>
+                                    <li >Materials <span class="neutral" data-value="0.65">+0.65%</span></li>
+                                    <li>Consumer Discretionary <span class="neutral" data-value="0.61">+0.61%</span></li>
+                                    <li>Health Care <span class="negative" data-value="-0.02">-0.02%</span></li>
+                                    <li>Industrials <span  class="negative" data-value="-0.21">-0.21%</span></li>
+                                    <li>Energy <span  class="negative" data-value="-0.41">-0.41%</span></li>
+                                    <li>Financials <span  class="negative" data-value="-0.42">-0.42%</span></li>
+                                    <li>Consumer Staples <span  class="negative" data-value="-0.98">-0.98%</span></li>
+                                    <li>Utilities <span  class="negative" data-value="-1.09">-1.09%</span></li>
+                                    <li>Real Estate <span  class="negative" data-value="-1.40">-1.40%</span></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="right">
+                <div class="righttop"> 
+                    <h1>오른쪽 위</h1>
+                </div>
+                <div class = "rightbottom">
+                    <div class="bottomleft">
+                        <h1>오른쪽 아래 왼쪽</h1>
+                    </div>
+                    <div class="bottomright">
+                        <h1>오른쪽 아래 오른쪽</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="donut.js"> </script>
+    </body>
+    </html>
+</html>

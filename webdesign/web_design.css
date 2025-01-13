@@ -1,0 +1,227 @@
+/* when you are creating left you should add margin 20px to balance between size of left and right*/
+.container {
+    display: flex; 
+    width: 100vw; 
+    height: 100vh; 
+}
+
+.left {
+flex: 1; /* Equal widths for both sides */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Spread content vertically */
+    border: 1px solid #ccc; /* For debugging */
+    box-sizing: border-box; 
+}
+
+.lefttop {
+    flex: 1;  
+    background-color:#5470a1; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    flex-direction: column;
+}
+
+.leftmiddle {
+    flex: 1;
+    background-color: blanchedalmond;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.right {
+    flex:1;
+    background-color: blueviolet;
+    display:flex;
+    flex-direction: column;
+} 
+
+.righttop {
+    flex:3;
+    background-color: aqua;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+
+}
+.rightbottom {
+    flex:1;
+    background-color: antiquewhite;
+    display:flex;
+} 
+
+.bottomleft, .bottomright {
+  flex : 1;
+  display: flex;
+  justify-content: center;
+  box-sizing: border-box;
+  align-items: center;
+}
+
+.bottomleft {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr); /* 3 equal-width columns */
+  grid-template-rows: repeat(1, 1fr);
+}
+
+.bottomright {
+  background-color:lightcoral;
+  overflow: hidden;
+}
+
+.related-news {
+  position: absolute;
+  top: 30px;
+  left: 30px;
+  padding: 10px; 
+  font-size: 25px;
+  font-weight: bold;
+}
+.news-link {
+    font-size: 10px; /* 원하는 크기 설정 */
+    text-decoration: none; /* 밑줄 제거 */
+    color: black; /* 선택사항: 색상 */
+}
+
+
+
+/* 원형 메뉴 컨테이너 */
+.circle-menu {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    border-radius: 50%; /* 원형 컨테이너 */
+    margin: 50px auto;
+    background: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* 메뉴 아이템 */
+  .menu-item {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    background: #4a90e2;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.3s, background-color 0.3s;
+    transform: rotate(var(--angle)) translate(120px) rotate(calc(-1 * var(--angle)));
+
+    transform: rotate(var(--angle)) translate(120px) rotate(calc(-1 * var(--angle)));
+    transition: transform 0.3s, background-color 0.3s;
+  }
+  
+  /* 마우스를 올렸을 때 확대 효과 */
+  .menu-item:hover {
+    transform: rotate(var(--angle)) translate(130px) rotate(calc(-1 * var(--angle)));
+    background: #0073e6;
+    font-size: 16px; /* 텍스트 크기 증가 */
+  }
+
+  .menu-item a {
+    font-size: 15px; /* 글자 크기 조정 */
+    text-decoration: none; /* 밑줄 제거 (필요 시) */
+    color: white; /* 글자 색상 */
+    font-weight: bold; /* 글자 굵기 */
+  }
+
+
+
+  .chart-container {
+    display:flex;
+    justify-content:space-between;
+    align-items: flex-start;
+    margin: 20px;
+
+  }
+  
+  .chart-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    position: relative;
+    top: 5px;
+    left: 10px;
+  }
+  
+  .donut-chart {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    margin: 0 auto;
+    border-radius: 50%;
+    background: conic-gradient(#ccc 0%, #ccc 100%);
+  }
+  
+  .donut-chart::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background-color: white; /* 도넛 안쪽 색상 */
+  }
+  
+  .center-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    font-weight: bold;
+  }
+  
+  .center-text span {
+    display: block;
+  }
+  
+  .legend {
+    margin-top: 20px;
+    text-align: left;
+    max-width: 400px;
+    margin: 20px auto;
+  }
+  
+  .positive {
+    color: #4caf50;
+  }
+  
+  .neutral {
+    color: #ff9800;
+  }
+  
+  .negative {
+    color: #f44336;
+  }
+
+  .donut-section {
+    flex: 1; 
+    text-align: center; 
+  }
+  .legend-section {
+    flex: 1; 
+    text-align: left; 
+    padding-left: 20px;
+  }
+  .sector-label {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    font-size: 1px;
+    font-weight: bold;
+    text-align: center;
+    pointer-events: none;
+    background-color: white;
+    padding: 1px 3px;
+    border-radius: 4px;
+  }
+
